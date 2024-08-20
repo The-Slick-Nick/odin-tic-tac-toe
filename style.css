@@ -3,3 +3,21 @@ div {
     height: 100px;
     outline: 2px solid red;
 }
+
+
+
+.board-container {
+
+    width: 75vw;
+    height: 75vh;
+    outline: 2px solid red;
+
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+
+}
+
+.board-cell {
+    outline: 1px solid blue;
+}
