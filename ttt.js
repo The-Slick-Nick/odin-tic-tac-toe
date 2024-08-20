@@ -47,6 +47,10 @@ function createBoard(doc) {
             boardCell.classList.add(`row-${r}`);
             boardCell.classList.add(`col-${c}`);
 
+            // TODO: Modify this (probably in the game object) later - this
+            // is simply for testing for now
+            boardCell.addEventListener("click", (e) => { boardCell.classList.add("token-x"); });
+
             boardDom.appendChild(boardCell);
 
             boardElements[idx] = boardCell;

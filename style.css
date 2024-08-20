@@ -1,7 +1,11 @@
-div {
+.test {
     width: 100px;
     height: 100px;
     outline: 2px solid red;
+}
+
+.test:hover {
+    background-color: red;
 }
 
 
@@ -20,4 +24,17 @@ div {
 
 .board-cell {
     outline: 1px solid blue;
+}
+
+.board-cell:hover {
+    background-color: blue;
+}
+
+.board-cell.token-x {
+    background-color: blue;
+}
+
+
+.board-cell.token-o {
+    background-color: red;
 }
