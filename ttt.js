@@ -203,7 +203,16 @@ function createBoard(doc) {
 
 
 
-function createPlayer(doc, player_token) {
+/**
+ * Create a player object
+ *
+ * @param doc - DOM "document" reference or equivalent mock
+ * @param player_token - Single character token player will use. "x" or "o"
+ * @param strategy - Default null - Function taking a gameBoard object and
+ *                   returning a chosen location to play a token. If null,
+ *                   defaults to waiting for human input
+ */
+function createPlayer(doc, player_token, strategy = null) {
     let wins = 0;
     let losses = 0;
 
@@ -224,6 +233,7 @@ function createPlayer(doc, player_token) {
 
     function win() {
         wins++;
+        scoreLabel.innerText = wins;
     }
 
     function lose() {
@@ -240,7 +250,7 @@ function createPlayer(doc, player_token) {
 
     return {
         getWins, getLosses, win, lose, setToken, getToken,
-        scoreLabel
+        scoreLabel, strategy
     };
 }
 
@@ -302,7 +312,16 @@ function createGame(doc) {
             if (boardState.complete) {
                 alert("Game is complete!");
                 if (boardState.winner !== null) {
-                    alert(boardState.winner + " won!");
+
+                    // use token to filter for winner
+                    players.forEach((p) => {
+                        if (p.getToken() === boardState.winner) {
+                            p.win();
+                        }
+                        else {
+                            p.lose();
+                        }
+                    });
                 }
                 else {
                     alert("Nobody won!");
