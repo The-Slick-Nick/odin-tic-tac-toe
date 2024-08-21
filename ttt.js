@@ -125,6 +125,7 @@ function createBoard(doc) {
             }
 
             if (rowMatch) {
+                console.log("rowMatch for row " + ckRow);
                 return {
                     complete: true,
                     winner: basis
@@ -141,10 +142,6 @@ function createBoard(doc) {
 
             let colMatch = true;
             for (let ckRow = 0; ckRow < 3; ckRow++) {
-                if (boardData[ckCol + ckRow * 3] !== null) {
-                    cellsFilled++;
-                }
-
                 if (boardData[ckCol + ckRow * 3] !== basis) {
                     colMatch = false;
                     break;
@@ -152,6 +149,7 @@ function createBoard(doc) {
             }
 
             if (colMatch) {
+                console.log("colMatch for column " + ckCol);
                 return {
                     complete: true,
                     winner: basis
@@ -209,7 +207,7 @@ function createBoard(doc) {
 
 
 
-function createPlayer(player_token) {
+function createPlayer(doc, player_token) {
     let wins = 0;
     let losses = 0;
 
@@ -243,66 +241,67 @@ function createPlayer(player_token) {
 }
 
 
+function createGame(doc) {
 
-const p1 = createPlayer('x');
-const p2 = createPlayer('o');
-const board = createBoard(document);
+    const p1 = createPlayer(doc, 'x');
+    const p2 = createPlayer(doc, 'o');
+    const board = createBoard(doc);
 
-const players = [p1, p2];
-let playerIdx = 0;
-
-
-board.boardDom.addEventListener("click", (e) => {
-
-    const cell = e.target;
-    const currentPlayer = players[playerIdx];
-
-    let rowcoord;
-    let colcoord;
-    let token = null;
+    const players = [p1, p2];
+    let playerIdx = 0;
 
 
-    cell.className.split(" ").forEach((cls) => {
+    board.boardDom.addEventListener("click", (e) => {
 
-        if (cls.startsWith("row")) {
-            rowcoord = parseInt(cls.split("-")[1]);
-        }
+        const cell = e.target;
+        const currentPlayer = players[playerIdx];
 
-        if (cls.startsWith("col")) {
-            colcoord = parseInt(cls.split("-")[1]);
-        }
+        let rowcoord;
+        let colcoord;
+        let token = null;
 
-        if (cls.startsWith("token")) {
-            token = cls.split("-")[1];
+        cell.className.split(" ").forEach((cls) => {
+
+            if (cls.startsWith("row")) {
+                rowcoord = parseInt(cls.split("-")[1]);
+            }
+
+            if (cls.startsWith("col")) {
+                colcoord = parseInt(cls.split("-")[1]);
+            }
+
+            if (cls.startsWith("token")) {
+                token = cls.split("-")[1];
+            }
+        });
+
+
+
+        if (token === null) {
+            board.place(currentPlayer.getToken(), rowcoord, colcoord);
+
+            // check for a winner
+
+            let boardState = board.getState();
+
+            if (boardState.complete) {
+                alert("Game is complete!");
+                if (boardState.winner !== null) {
+                    alert(boardState.winner + " won!");
+                }
+                else {
+                    alert("Nobody won!");
+                }
+                board.resetBoard();
+            }
+
+
+            playerIdx = (playerIdx + 1) % players.length;
         }
     });
 
+}
 
-
-    if (token === null) {
-        board.place(currentPlayer.getToken(), rowcoord, colcoord);
-
-        // check for a winner
-
-        let boardState = board.getState();
-
-        if (boardState.complete) {
-            alert("Game is complete!");
-            if (boardState.winner !== null) {
-                alert(boardState.winner + " won!");
-            }
-            else {
-                alert("Nobody won!");
-            }
-            board.resetBoard();
-        }
-
-
-        playerIdx = (playerIdx + 1) % players.length;
-    }
-
-
-
-});
+game = createGame(document);
 
 
