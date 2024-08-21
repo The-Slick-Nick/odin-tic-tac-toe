@@ -34,11 +34,9 @@ function createBoard(doc) {
         boardData[i] = null;  // use null, not undefined
     }
 
-    const pageBody = doc.querySelector("body");
     const boardDom = doc.createElement("div");
     boardDom.classList.add("board-container");
 
-    pageBody.appendChild(boardDom);
 
     // TODO: Perhaps take board size as an argument
 
@@ -209,6 +207,11 @@ function createPlayer(doc, player_token) {
     let wins = 0;
     let losses = 0;
 
+    const scoreLabel = doc.createElement("div");
+    scoreLabel.classList.add(`token-${player_token}`);
+    scoreLabel.classList.add("score-label");
+    scoreLabel.innerText = wins;
+
     let token = player_token;
 
     function getWins() {
@@ -235,11 +238,20 @@ function createPlayer(doc, player_token) {
         return token;
     }
 
-    return { getWins, getLosses, win, lose, setToken, getToken };
+    return {
+        getWins, getLosses, win, lose, setToken, getToken,
+        scoreLabel
+    };
 }
 
 
 function createGame(doc) {
+
+    // pageBody.appendChild(boardDom);
+
+
+    const pageBody = doc.querySelector("body");
+
 
     const p1 = createPlayer(doc, 'x');
     const p2 = createPlayer(doc, 'o');
@@ -247,6 +259,11 @@ function createGame(doc) {
 
     const players = [p1, p2];
     let playerIdx = 0;
+
+    pageBody.appendChild(board.boardDom);
+    pageBody.appendChild(p1.scoreLabel);
+    pageBody.appendChild(p2.scoreLabel);
+
 
 
     board.boardDom.addEventListener("click", (e) => {
