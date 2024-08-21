@@ -30,6 +30,10 @@ function createBoard(doc) {
     const boardData = new Array(9);
     const boardElements = new Array(9);
 
+    for (let i = 0; i < 9; i++) {
+        boardData[i] = null;  // use null, not undefined
+    }
+
     const pageBody = doc.querySelector("body");
     const boardDom = doc.createElement("div");
     boardDom.classList.add("board-container");
@@ -47,12 +51,7 @@ function createBoard(doc) {
             boardCell.classList.add(`row-${r}`);
             boardCell.classList.add(`col-${c}`);
 
-            // TODO: Modify this (probably in the game object) later - this
-            // is simply for testing for now
-            boardCell.addEventListener("click", (e) => { boardCell.classList.add("token-x"); });
-
             boardDom.appendChild(boardCell);
-
             boardElements[idx] = boardCell;
         }
     }
@@ -79,9 +78,14 @@ function createBoard(doc) {
 
     }
 
+    function getTokenAt(row, column) {
+        let idx = column + 3 * row;
+        return boardData[idx];
+    }
+
     function resetBoard() {
         for (let i = 0; i < 9; i++) {
-            boardData[i] = undefined;
+            boardData[i] = null;
             const allClasses = boardElements[i].className;
             if (allClasses) {
                 allClasses
@@ -90,13 +94,117 @@ function createBoard(doc) {
                     .forEach((cl) => { boardElements[i].classList.remove(cl); });
             }
         }
-
-
     }
 
+    // Assess the state of the game board
+    // Returns:
+    // complete: boolean - is the game over
+    // winner: winning token, if any. If nobody won, is null
+    function getState() {
 
-    return { printBoard, place, resetBoard };
+        let cellsFilled = 0;
 
+        // rows
+        for (let ckRow = 0; ckRow < 3; ckRow++) {
+            let basis = boardData[0 + ckRow * 3];
+            if (basis === null) {
+                continue;
+            }
+
+            let rowMatch = true;
+            for (let ckCol = 0; ckCol < 3; ckCol++) {
+
+                if (boardData[ckCol + ckRow * 3] !== null) {
+                    cellsFilled++;
+                }
+
+                if (boardData[ckCol + ckRow * 3] !== basis) {
+                    rowMatch = false;
+                    break;
+                }
+            }
+
+            if (rowMatch) {
+                return {
+                    complete: true,
+                    winner: basis
+                };
+            }
+        }
+
+        // columns
+        for (let ckCol = 0; ckCol < 3; ckCol++) {
+            let basis = boardData[ckCol];
+            if (basis === null) {
+                continue;
+            }
+
+            let colMatch = true;
+            for (let ckRow = 0; ckRow < 3; ckRow++) {
+                if (boardData[ckCol + ckRow * 3] !== null) {
+                    cellsFilled++;
+                }
+
+                if (boardData[ckCol + ckRow * 3] !== basis) {
+                    colMatch = false;
+                    break;
+                }
+            }
+
+            if (colMatch) {
+                return {
+                    complete: true,
+                    winner: basis
+                };
+            }
+        }
+
+        // diagonals
+        let basis = boardData[0];
+        if (basis !== null) {
+            let diagSeMatch = true;
+            for (let ckIdx = 0; ckIdx < 3; ckIdx++) {
+
+                if (boardData[ckIdx + ckIdx * 3] !== basis) {
+                    diagSeMatch = false;
+                    break;
+                }
+            }
+            if (diagSeMatch) {
+                return {
+                    complete: true,
+                    winner: basis
+                }
+            }
+        }
+
+        basis = boardData[2];
+        if (basis !== null) {
+            let diagSwMatch = true;
+            for (let ckIdx = 0; ckIdx < 3; ckIdx++) {
+
+                if (boardData[2 - ckIdx + ckIdx * 3] !== basis) {
+                    diagSwMatch = false;
+                    break;
+                }
+            }
+
+            if (diagSwMatch) {
+                return {
+                    complete: true,
+                    winner: basis
+                }
+            }
+        }
+
+
+        return {
+            complete: cellsFilled === 9,
+            winner: null
+        };
+    }
+
+    return { printBoard, place, resetBoard, getTokenAt, boardDom, getState };
 }
 
 
@@ -135,40 +243,66 @@ function createPlayer(player_token) {
 }
 
 
-// Factory for a game object
-function createGame() {
 
-    let humanPlayer = createPlayer();
-    let aiPlayer = createPlayer();
+const p1 = createPlayer('x');
+const p2 = createPlayer('o');
+const board = createBoard(document);
 
-
-
-
+const players = [p1, p2];
+let playerIdx = 0;
 
 
-}
+board.boardDom.addEventListener("click", (e) => {
 
-// Factory for a round of tic tac toe
-function createRound() { }
+    const cell = e.target;
+    const currentPlayer = players[playerIdx];
 
-if (typeof document === "undefined") {
-    console.log("NO DOCUMENT");
-}
-else {
-    console.log(document);
-}
+    let rowcoord;
+    let colcoord;
+    let token = null;
 
 
-let myboard = (
-    typeof document === "undefined"
-        ? createBoard(doc_mock)
-        : createBoard(document)
-);
+    cell.className.split(" ").forEach((cls) => {
+
+        if (cls.startsWith("row")) {
+            rowcoord = parseInt(cls.split("-")[1]);
+        }
+
+        if (cls.startsWith("col")) {
+            colcoord = parseInt(cls.split("-")[1]);
+        }
+
+        if (cls.startsWith("token")) {
+            token = cls.split("-")[1];
+        }
+    });
 
 
-myboard.place("X", 1, 1);
-myboard.printBoard();
+
+    if (token === null) {
+        board.place(currentPlayer.getToken(), rowcoord, colcoord);
+
+        // check for a winner
+
+        let boardState = board.getState();
+
+        if (boardState.complete) {
+            alert("Game is complete!");
+            if (boardState.winner !== null) {
+                alert(boardState.winner + " won!");
+            }
+            else {
+                alert("Nobody won!");
+            }
+            board.resetBoard();
+        }
+
+
+        playerIdx = (playerIdx + 1) % players.length;
+    }
 
 
 
-document.querySelector(".test").addEventListener("click", (e) => { myboard.resetBoard(); });
+});
+
+
