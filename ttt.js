@@ -125,7 +125,6 @@ function createBoard(doc) {
             }
 
             if (rowMatch) {
-                console.log("rowMatch for row " + ckRow);
                 return {
                     complete: true,
                     winner: basis
@@ -149,7 +148,6 @@ function createBoard(doc) {
             }
 
             if (colMatch) {
-                console.log("colMatch for column " + ckCol);
                 return {
                     complete: true,
                     winner: basis

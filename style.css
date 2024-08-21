@@ -27,7 +27,7 @@
 }
 
 .board-cell:hover {
-    background-color: blue;
+    background-color: gray;
 }
 
 .board-cell.token-x {
