@@ -32,10 +32,11 @@ function createBoardCell(doc, row, col) {
     boardCell.classList.add(`col-${col}`);
 
 
-    const xSvg = doc.createElement("svg");
-    const xPath = doc.createElement("path");
+    const xSvg = doc.createElementNS("http://www.w3.org/2000/svg", "svg");
+    const xPath = doc.createElementNS("http://www.w3.org/2000/svg", "path");
 
     xPath.setAttribute("d", "M0,0 L32,32 M0,32 L32,0");
+    xPath.setAttribute("style", "fill:none;stroke:green;stroke-width:3;");
     xSvg.appendChild(xPath);
     xSvg.classList.add("board-token");
     xSvg.classList.add("token-x");
@@ -367,4 +368,15 @@ function runGame(doc) {
 
 runGame(document);
 
+/****************/
 
+const testSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+const testPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+testPath.setAttribute("d", "M0,0 L32,32 M0,32 L32,0");
+testPath.setAttribute("style", "fill:none;stroke:green;stroke-width:3;");
+
+testSvg.appendChild(testPath);
+testSvg.setAttribute("height", "32");
+testSvg.setAttribute("width", "32");
+
+document.querySelector("body").appendChild(testSvg);

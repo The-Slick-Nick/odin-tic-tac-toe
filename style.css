@@ -27,6 +27,7 @@
 
 .board-cell {
     outline: 1px solid blue;
+    background-color: transparent;
 }
 
 .board-cell:hover {
@@ -42,9 +43,16 @@
 }
 
 .board-token {
+    display: block;
     height: 32px;
     width: 32px;
-    fill: none;
     stroke: green;
     stroke-width: 3;
+}
+
+svg {
+    fill: black;
+    float: left;
+    overflow: visible;
+    position: absolute;
 }
