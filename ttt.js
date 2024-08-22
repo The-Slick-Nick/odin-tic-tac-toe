@@ -23,6 +23,32 @@ doc_mock = {
 }
 
 
+function createBoardCell(doc, row, col) {
+
+    const boardCell = doc.createElement("div");
+
+    boardCell.classList.add("board-cell");
+    boardCell.classList.add(`row-${row}`);
+    boardCell.classList.add(`col-${col}`);
+
+
+    const xSvg = doc.createElement("svg");
+    const xPath = doc.createElement("path");
+
+    xPath.setAttribute("d", "M0,0 L32,32 M0,32 L32,0");
+    xSvg.appendChild(xPath);
+    xSvg.classList.add("board-token");
+    xSvg.classList.add("token-x");
+    xSvg.setAttribute("height", "32");
+    xSvg.setAttribute("width", "32");
+
+    boardCell.appendChild(xSvg);
+
+    return { cellDom: boardCell };
+
+}
+
+
 // Create and return a GameBoard object
 // Take a reference to document
 function createBoard(doc) {
@@ -44,12 +70,8 @@ function createBoard(doc) {
         for (let c = 0; c < 3; c++) {
             let idx = c + 3 * r;
 
-            const boardCell = doc.createElement("div");
-            boardCell.classList.add("board-cell");
-            boardCell.classList.add(`row-${r}`);
-            boardCell.classList.add(`col-${c}`);
-
-            boardDom.appendChild(boardCell);
+            const boardCell = createBoardCell(doc, r, c);
+            boardDom.appendChild(boardCell.cellDom);
             boardElements[idx] = boardCell;
         }
     }
@@ -72,7 +94,7 @@ function createBoard(doc) {
     function place(token, row, column) {
         let idx = column + 3 * row;
         boardData[idx] = token;
-        boardElements[idx].classList.add(`token-${token}`);
+        boardElements[idx].cellDom.classList.add(`token-${token}`);
 
     }
 
@@ -84,12 +106,14 @@ function createBoard(doc) {
     function resetBoard() {
         for (let i = 0; i < 9; i++) {
             boardData[i] = null;
-            const allClasses = boardElements[i].className;
+            const allClasses = boardElements[i].cellDom.className;
             if (allClasses) {
                 allClasses
                     .split(" ")
                     .filter(c => c.startsWith("token"))
-                    .forEach((cl) => { boardElements[i].classList.remove(cl); });
+                    .forEach((cl) => {
+                        boardElements[i].cellDom.classList.remove(cl);
+                    });
             }
         }
     }
@@ -100,22 +124,16 @@ function createBoard(doc) {
     // winner: winning token, if any. If nobody won, is null
     function getState() {
 
-        let cellsFilled = 0;
 
         // rows
         for (let ckRow = 0; ckRow < 3; ckRow++) {
-            let basis = boardData[0 + ckRow * 3];
+            let basis = boardData[0 + 3 * ckRow];
             if (basis === null) {
                 continue;
             }
 
             let rowMatch = true;
             for (let ckCol = 0; ckCol < 3; ckCol++) {
-
-                if (boardData[ckCol + ckRow * 3] !== null) {
-                    cellsFilled++;
-                }
-
                 if (boardData[ckCol + ckRow * 3] !== basis) {
                     rowMatch = false;
                     break;
@@ -123,12 +141,14 @@ function createBoard(doc) {
             }
 
             if (rowMatch) {
+                alert("ROW " + ckRow + " ALL MATCHING");
                 return {
                     complete: true,
                     winner: basis
                 };
             }
         }
+
 
         // columns
         for (let ckCol = 0; ckCol < 3; ckCol++) {
@@ -191,6 +211,15 @@ function createBoard(doc) {
             }
         }
 
+
+        let cellsFilled = 0;
+        for (let ckRow = 0; ckRow < 3; ckRow++) {
+            for (let ckCol = 0; ckCol < 3; ckCol++) {
+                if (boardData[ckCol + ckRow * 3] !== null) {
+                    cellsFilled++;
+                }
+            }
+        }
 
         return {
             complete: cellsFilled === 9,
@@ -255,7 +284,7 @@ function createPlayer(doc, player_token, strategy = null) {
 }
 
 
-function createGame(doc) {
+function runGame(doc) {
 
     // pageBody.appendChild(boardDom);
 
@@ -336,6 +365,6 @@ function createGame(doc) {
 
 }
 
-game = createGame(document);
+runGame(document);
 
 
