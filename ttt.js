@@ -31,19 +31,10 @@ function createBoardCell(doc, row, col) {
     boardCell.classList.add(`row-${row}`);
     boardCell.classList.add(`col-${col}`);
 
+    const cellToken = doc.createElement("div");
+    cellToken.classList.add("board-token");
 
-    const xSvg = doc.createElementNS("http://www.w3.org/2000/svg", "svg");
-    const xPath = doc.createElementNS("http://www.w3.org/2000/svg", "path");
-
-    xPath.setAttribute("d", "M0,0 L32,32 M0,32 L32,0");
-    xPath.setAttribute("style", "fill:none;stroke:green;stroke-width:3;");
-    xSvg.appendChild(xPath);
-    xSvg.classList.add("board-token");
-    xSvg.classList.add("token-x");
-    xSvg.setAttribute("height", "32");
-    xSvg.setAttribute("width", "32");
-
-    boardCell.appendChild(xSvg);
+    boardCell.appendChild(cellToken);
 
     return { cellDom: boardCell };
 
@@ -73,7 +64,12 @@ function createBoard(doc) {
 
             const boardCell = createBoardCell(doc, r, c);
             boardDom.appendChild(boardCell.cellDom);
+
+            if (boardCell === undefined) {
+                alert("FUCK YOU");
+            }
             boardElements[idx] = boardCell;
+
         }
     }
 
@@ -95,7 +91,9 @@ function createBoard(doc) {
     function place(token, row, column) {
         let idx = column + 3 * row;
         boardData[idx] = token;
-        boardElements[idx].cellDom.classList.add(`token-${token}`);
+        console.log("Attempting to access idx " + idx);
+
+        boardElements[idx].cellDom.querySelector(".board-token").classList.add(`token-${token}`);
 
     }
 
@@ -287,11 +285,7 @@ function createPlayer(doc, player_token, strategy = null) {
 
 function runGame(doc) {
 
-    // pageBody.appendChild(boardDom);
-
-
     const pageBody = doc.querySelector("body");
-
 
     const p1 = createPlayer(doc, 'x');
     const p2 = createPlayer(doc, 'o');
@@ -308,14 +302,16 @@ function runGame(doc) {
 
     board.boardDom.addEventListener("click", (e) => {
 
-        const cell = e.target;
+        const cellElem = e.target;
+        const tokenElem = cellElem.querySelector(".board-token");
+
         const currentPlayer = players[playerIdx];
 
         let rowcoord;
         let colcoord;
         let token = null;
 
-        cell.className.split(" ").forEach((cls) => {
+        cellElem.className.split(" ").forEach((cls) => {
 
             if (cls.startsWith("row")) {
                 rowcoord = parseInt(cls.split("-")[1]);
@@ -324,12 +320,19 @@ function runGame(doc) {
             if (cls.startsWith("col")) {
                 colcoord = parseInt(cls.split("-")[1]);
             }
-
-            if (cls.startsWith("token")) {
-                token = cls.split("-")[1];
-            }
         });
 
+        tokenCls = tokenElem
+            .className
+            .split(" ")
+            .filter((elm) => elm.startsWith("token"))
+
+        if (tokenCls.length > 0) {
+            token = tokenCls[0].split("-")[1];
+        }
+        else {
+            token = null;
+        }
 
 
         if (token === null) {

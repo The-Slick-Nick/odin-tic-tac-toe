@@ -34,11 +34,11 @@
     background-color: gray;
 }
 
-.board-cell.token-x {
+.board-cell>.token-x {
     background-color: blue;
 }
 
-.board-cell.token-o {
+.board-cell>.token-o {
     background-color: red;
 }
 
