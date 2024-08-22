@@ -53,7 +53,7 @@ function createBoard(doc) {
     }
 
     const boardDom = doc.createElement("div");
-    boardDom.classList.add("board-container");
+    boardDom.classList.add("board-frame");
 
 
     // TODO: Perhaps take board size as an argument
