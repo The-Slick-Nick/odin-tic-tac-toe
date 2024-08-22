@@ -1,18 +1,44 @@
-.test {
-    width: 100px;
-    height: 100px;
+body {
+    display: grid;
+    grid-template-rows: repeat(1fr, 3);
+    grid-template-columns: repeat(1fr, 3);
+}
+
+
+.game-options-container {
+
+    grid-column: 2 / span 1;
     outline: 2px solid red;
+    align-self: start;
+    height: 100px;
 
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.game-options-body {
+    width: 100%;
+    background-color: blue;
+    height: 75%;
 
 }
 
-.test:hover {
-    background-color: red;
+.game-options-toggle {
+    width: 50%;
+    background-color: purple;
+    height: 25%;
 }
-
 
 
 .board-container {
+
+    align-self: center;
+    justify-self: center;
+
+    grid-row: 2 / span 1;
+    grid-column: 2 / span 1;
 
     width: 75vw;
     height: 75vh;
@@ -48,11 +74,4 @@
     width: 32px;
     stroke: green;
     stroke-width: 3;
-}
-
-svg {
-    fill: black;
-    float: left;
-    overflow: visible;
-    position: absolute;
 }
