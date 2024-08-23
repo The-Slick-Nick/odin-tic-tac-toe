@@ -65,9 +65,6 @@ function createBoard(doc) {
             const boardCell = createBoardCell(doc, r, c);
             boardDom.appendChild(boardCell.cellDom);
 
-            if (boardCell === undefined) {
-                alert("FUCK YOU");
-            }
             boardElements[idx] = boardCell;
 
         }
@@ -93,7 +90,11 @@ function createBoard(doc) {
         boardData[idx] = token;
         console.log("Attempting to access idx " + idx);
 
-        boardElements[idx].cellDom.querySelector(".board-token").classList.add(`token-${token}`);
+        boardElements[idx]
+            .cellDom
+            .querySelector(".board-token")
+            .classList
+            .add(`token-${token}`);
 
     }
 
@@ -285,7 +286,8 @@ function createPlayer(doc, player_token, strategy = null) {
 
 function runGame(doc) {
 
-    const pageBody = doc.querySelector("body");
+    const boardTarget = doc.querySelector(".gameboard-container");
+    const labelTarget = doc.querySelector(".label-container");
 
     const p1 = createPlayer(doc, 'x');
     const p2 = createPlayer(doc, 'o');
@@ -294,9 +296,9 @@ function runGame(doc) {
     const players = [p1, p2];
     let playerIdx = 0;
 
-    pageBody.appendChild(board.boardDom);
-    pageBody.appendChild(p1.scoreLabel);
-    pageBody.appendChild(p2.scoreLabel);
+    boardTarget.appendChild(board.boardDom);
+    labelTarget.appendChild(p1.scoreLabel);
+    labelTarget.appendChild(p2.scoreLabel);
 
 
 
