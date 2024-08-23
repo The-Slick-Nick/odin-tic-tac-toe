@@ -5,25 +5,8 @@
  */
 
 
-classlist_mock = {
-    add: (cls) => { console.log(`Added class ${cls} to mock`); },
-    remove: (cls) => { console.log(`Removed class ${cls} from mock`); },
-    toggle: (cls) => { console.log(`Toggled class ${cls} on mock`); }
-}
 
-// mock of a dom element
-dom_mock = {
-    classList: classlist_mock,
-    appendChild: (arg) => { console.log("Added a child node to mock"); }
-}
-
-doc_mock = {
-    querySelector: (arg) => { return dom_mock; },
-    createElement: (arg) => { return dom_mock; }
-}
-
-
-function createBoardCell(doc, row, col) {
+export function createBoardCell(doc, row, col) {
 
     const boardCell = doc.createElement("div");
 
@@ -43,7 +26,7 @@ function createBoardCell(doc, row, col) {
 
 // Create and return a GameBoard object
 // Take a reference to document
-function createBoard(doc) {
+export function createBoard(doc) {
 
     const boardData = new Array(9);
     const boardElements = new Array(9);
@@ -241,7 +224,7 @@ function createBoard(doc) {
  *                   returning a chosen location to play a token. If null,
  *                   defaults to waiting for human input
  */
-function createPlayer(doc, player_token, strategy = null) {
+export function createPlayer(doc, player_token, strategy = null) {
     let wins = 0;
     let losses = 0;
 
@@ -284,7 +267,7 @@ function createPlayer(doc, player_token, strategy = null) {
 }
 
 
-function runGame(doc) {
+export function runGame(doc) {
 
     const boardTarget = doc.querySelector(".gameboard-container");
     const labelTarget = doc.querySelector(".label-container");
@@ -324,7 +307,7 @@ function runGame(doc) {
             }
         });
 
-        tokenCls = tokenElem
+        let tokenCls = tokenElem
             .className
             .split(" ")
             .filter((elm) => elm.startsWith("token"))
@@ -371,17 +354,3 @@ function runGame(doc) {
 
 }
 
-runGame(document);
-
-/****************/
-
-const testSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-const testPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-testPath.setAttribute("d", "M0,0 L32,32 M0,32 L32,0");
-testPath.setAttribute("style", "fill:none;stroke:green;stroke-width:3;");
-
-testSvg.appendChild(testPath);
-testSvg.setAttribute("height", "32");
-testSvg.setAttribute("width", "32");
-
-document.querySelector("body").appendChild(testSvg);
