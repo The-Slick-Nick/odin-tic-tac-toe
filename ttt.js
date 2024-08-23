@@ -6,7 +6,7 @@
 
 
 
-export function createBoardCell(doc, row, col) {
+function createBoardCell(doc, row, col) {
 
     const boardCell = doc.createElement("div");
 
@@ -26,7 +26,7 @@ export function createBoardCell(doc, row, col) {
 
 // Create and return a GameBoard object
 // Take a reference to document
-export function createBoard(doc) {
+function createBoard(doc) {
 
     const boardData = new Array(9);
     const boardElements = new Array(9);
@@ -224,7 +224,7 @@ export function createBoard(doc) {
  *                   returning a chosen location to play a token. If null,
  *                   defaults to waiting for human input
  */
-export function createPlayer(doc, player_token, strategy = null) {
+function createPlayer(doc, player_token, strategy = null) {
     let wins = 0;
     let losses = 0;
 
@@ -267,7 +267,7 @@ export function createPlayer(doc, player_token, strategy = null) {
 }
 
 
-export function runGame(doc) {
+function runGame(doc) {
 
     const boardTarget = doc.querySelector(".gameboard-container");
     const labelTarget = doc.querySelector(".label-container");
@@ -353,4 +353,11 @@ export function runGame(doc) {
     });
 
 }
+
+export {
+    createBoardCell,
+    createBoard,
+    createPlayer,
+    runGame
+};
 
