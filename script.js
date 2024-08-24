@@ -28,6 +28,11 @@ function setup() {
     p1 = createPlayer(document, p1Input.value, "x");
     p2 = createPlayer(document, p2Input.value, "o");
     gameobj = createGame(document, p1, p2, boardTarget, labelTarget);
+
+    gameobj.registerStateChangeCallback(() => {
+        console.log(gameobj.getState());
+    });
+
 }
 
 setup();

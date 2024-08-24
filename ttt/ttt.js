@@ -349,10 +349,9 @@ function createGame(
     doc, p1, p2, boardTarget, labelTarget
 ) {
 
-    // const p1 = createPlayer(doc, 'x');
-    // const p2 = createPlayer(doc, 'o');
     const board = createGameBoard(doc);
 
+    const stateCallbacks = [];
     const players = [p1, p2];
     let playerIdx = 0;
 
@@ -405,6 +404,8 @@ function createGame(
 
             playerIdx = (playerIdx + 1) % players.length;
         }
+
+        stateCallbacks.forEach((cb) => { cb(); });
     });
     return {
         restart: () => {
@@ -416,9 +417,32 @@ function createGame(
             p1.destroy();
             p2.destroy();
             board.destroy();
+        },
+
+        // pass through
+        getState: board.getState,
+
+        // Declare a callback to invoke upon board being
+        // clicked
+        registerClickEvent: (callback) => {
+            return board.boardDom.addEventListener("click", callback);
+        },
+
+
+        // register a callback to be invoked when
+        // the game state changes in some way.
+        // (this is needed eventually for AI players)
+        registerStateChangeCallback: (callback) => {
+            stateCallbacks.push(callback);
+        },
+
+        get player1() {
+            return p1;
+        },
+
+        get player2() {
+            return p2;
         }
-
-
     };
 }
 
