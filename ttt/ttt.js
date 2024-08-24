@@ -12,142 +12,27 @@
  *  added modularly to wherever.
  */
 
-
-
-
-
-function createBoardCell(doc, row, col) {
-
-    let cellDom = doc.createElement("div");
-
-    cellDom.classList.add("board-cell");
-    cellDom.classList.add(`row-${row}`);
-    cellDom.classList.add(`col-${col}`);
-
-    let tokenDom = null;
-    let token = "";
-
-    return {
-        get cellDom() {
-            return cellDom;
-        },
-
-        // place token, replacing any that currently exist
-        placeToken: (toPlace) => {
-            toPlace = toPlace.toLowerCase();
-            if (toPlace !== 'o' && toPlace !== 'x') {
-                throw new Error(`Invalid token ${toPlace}`);
-            }
-
-            token = toPlace;
-            tokenDom = null;
-
-            // ... because .children has no .forEach()
-            [].forEach.call(
-                cellDom.children,
-                (elm) => cellDom.removeChild(elm)
-            );
-
-            tokenDom = doc.createElement("div");
-            tokenDom.classList.add("token");
-            tokenDom.classList.add(token);
-
-            cellDom.appendChild(tokenDom);
-
-        },
-
-        removeToken: () => {
-
-            token = "";
-            tokenDom = null;
-
-            // ... because .children has no .forEach()
-            [].forEach.call(
-                cellDom.children,
-                (elm) => cellDom.removeChild(elm)
-            );
-
-        },
-
-        // get current token, or empty string if none
-        get token() {
-            return token;
-        },
-
-        get row() {
-            return row;
-        },
-
-        get col() {
-            return col;
-        },
-
-        destroy: () => {
-
-            [].forEach.call(
-                cellDom.children,
-                (elm) => cellDom.removeChild(elm)
-            );
-            tokenDom = null;
-
-            cellDom.remove();
-            cellDom = null;
-        }
-    }
-}
-
-
 // Create and return a GameBoard object
 // Take a reference to document
-function createGameBoard(doc) {
+function createGameBoard() {
 
-    const cellObjs = new Array(9);
-
-    let boardDom = doc.createElement("div");
-    boardDom.classList.add("board-frame");
-
-
-    // TODO: Perhaps take board size as an argument
-
-    for (let r = 0; r < 3; r++) {
-        for (let c = 0; c < 3; c++) {
-            let idx = c + 3 * r;
-
-            const boardCell = createBoardCell(doc, r, c);
-            boardDom.appendChild(boardCell.cellDom);
-            cellObjs[idx] = boardCell;
-        }
-    }
-
-    function printBoard() {
-        console.log("_________________");
-        for (let r = 0; r < 3; r++) {
-            let printstr = "";
-            for (let c = 0; c < 3; c++) {
-
-                let idx = c + 3 * r;
-                printstr += cellObjs[idx].token;
-            }
-            console.log(printstr);
-        }
-    }
+    const contents = ["", "", "", "", "", "", "", "", ""];
 
     // place X or O in board. Return 0 if successful placement, or -1
     // if placement invalid
     function place(token, row, column) {
         let idx = column + 3 * row;
-
-        cellObjs[idx].placeToken(token);
+        contents[idx] = token;
     }
 
     function getTokenAt(row, column) {
         let idx = column + 3 * row;
-        return cellObjs[idx].token;
+        return contents[idx];
     }
 
     function resetBoard() {
         for (let i = 0; i < 9; i++) {
-            cellObjs[i].removeToken();
+            contents[i] = "";
         }
     }
 
@@ -258,33 +143,8 @@ function createGameBoard(doc) {
         };
     }
 
-    // Get boardCell object from a passed dom element, returning null
-    // if it doesn't exist
-    function getCellFromDom(cellDom) {
-
-        for (let idx = 0; idx < 9; idx++) {
-            if (cellObjs[idx].cellDom === cellDom) {
-                return cellObjs[idx];
-            }
-
-        }
-        return null;
-    }
-
-    function destroy() {
-        for (let idx = 0; idx < 9; idx++) {
-            cellObjs[idx].destroy();
-            cellObjs[idx] = null;
-        }
-
-        boardDom.remove();
-        boardDom = null;
-
-    }
-
     return {
-        printBoard, place, resetBoard, getTokenAt, boardDom, getState,
-        getCellFromDom, destroy,
+        place, resetBoard, getTokenAt, getState,
         get boardDom() {
             return boardDom;
         }
@@ -303,14 +163,9 @@ function createGameBoard(doc) {
  *                   returning a chosen location to play a token. If "",
  *                   defaults to waiting for human input
  */
-function createPlayer(doc, name, token, strategy = null) {
+function createPlayer(name, token, strategy = null) {
     let wins = 0;
     let losses = 0;
-
-    const scoreLabel = doc.createElement("div");
-    scoreLabel.classList.add(`token-${token}`);
-    scoreLabel.classList.add("score-label");
-    scoreLabel.innerText = `${name}: ${wins}`;
 
     function getWins() {
         return wins;
@@ -322,7 +177,6 @@ function createPlayer(doc, name, token, strategy = null) {
 
     function win() {
         wins++;
-        scoreLabel.innerText = `${name}: ${wins}`;
     }
 
     function lose() {
@@ -337,67 +191,69 @@ function createPlayer(doc, name, token, strategy = null) {
         return token;
     }
 
-    // clear/remove all created and appended dom elements
-    function destroy() {
-        scoreLabel.remove();
-    }
 
     return {
         getWins, getLosses, win, lose, setToken, getToken,
-        scoreLabel, strategy, destroy,
+        strategy,
         get token() {
             return token;
         },
         get name() {
             return name;
+        },
+
+        executeStragegy: (board) => {
+            return strategy(token, board);
         }
+
     };
 }
 
 
-function createGame(
-    doc, p1, p2, boardTarget
-) {
+function createGame(p1, p2) {
 
-    const board = createGameBoard(doc);
+    if (
+        p1.token === p2.token
+        ||
+        (p1.token !== 'x' && p1.token !== 'o')
+        ||
+        (p2.token !== 'o' && p2.token !== 'o')
+    ) {
+        throw new Error(
+            `Invalid player token config ${p1.token}, ${p2.token}`
+        );
+    }
+
+    const board = createGameBoard();
 
     const stateCallbacks = [];
     const players = [p1, p2];
     let playerIdx = 0;
 
-    boardTarget.appendChild(board.boardDom);
-
-    board.boardDom.addEventListener("click", (e) => {
-
-        // ignore clicks on completed game
-        if (board.getState().complete) {
-            return;
-        }
-
-        const cellDom = e.target;
-        const cellElem = board.getCellFromDom(cellDom);
-
-        if (cellElem === null) {
-            return;
-        }
+    function clickCell(row, col) {
+        // The "click" to come from an external listener
 
         const currentPlayer = players[playerIdx];
-        // ai, not clickable
         if (currentPlayer.strategy !== null) {
+            // ai 
             return;
         }
 
-        placeToken(currentPlayer.token, cellElem.row, cellElem.col);
+        if (board.getTokenAt(row, col) !== "") {
+            return;
+        }
 
-    });
+        placeToken(currentPlayer.token, row, col);
+
+    }
 
     function placeToken(token, row, col) {
 
-        // ignore completed game
-        // ends recursion (if 2 ai players)
         if (board.getState().complete) {
             return;
         }
+
+        // TODO: Test for game.placeToken() at already placed spot
 
         if (token === "") {
             return;
@@ -419,53 +275,53 @@ function createGame(
 
         stateCallbacks.forEach((cb) => { cb(); });
 
-
         playerIdx = (playerIdx + 1) % players.length;
-        if (players[playerIdx].strategy !== null) {
-            // call strategy(board) to determine cell to place
-            // perform placement after some time
+        const nextPlayer = players[playerIdx];
+        if (nextPlayer.strategy !== null) {
 
-            let strat = players[playerIdx].strategy;
-            setTimeout(() => strat(board), 1000);
+            let placement = executeStrategy(board);
+            setTimeout(
+                () => placeToken(nextPlayer.token, placement.row, placement.col),
+                1000
+            );
         }
 
     }
 
+    if (p1.strategy !== null) {
+        let placement = p1.executeStrategy(board);
+        setTimeout(
+            () => placeToken(p1.token, placement.row, placement.col),
+            1000
+        );
+    }
+
     return {
+        clickCell,
         restart: () => {
             board.resetBoard();
             playerIdx = 0;
             stateCallbacks.forEach((cb) => cb());
         },
 
-        // clear all game's elements from dom
-        destroy: () => {
-            p1.destroy();
-            p2.destroy();
-            board.destroy();
-        },
-
         // pass through
         getState: () => {
             let bstate = board.getState();
+
             let winner = null;
-            if (bstate.winner === 'x') {
-                winner = players[0];
-            }
-            else if (bstate.winner === 'o') {
-                winner = players[1];
-            }
+            players.forEach((player) => {
+                if (player.token === bstate.winner) {
+                    winner = player;
+                }
+            });
+
+            let whoseTurn = bstate.complete ? null : players[playerIdx];
 
             return {
                 complete: bstate.complete,
-                winner: winner
+                winner: winner,
+                whoseTurn: whoseTurn
             };
-        },
-
-        // Declare a callback to invoke upon board being
-        // clicked
-        registerClickEvent: (callback) => {
-            return board.boardDom.addEventListener("click", callback);
         },
 
 
@@ -484,8 +340,8 @@ function createGame(
             return p2;
         },
 
-        get boardDom() {
-            return board.boardDom;
+        getTokenAt: (row, col) => {
+            return board.getTokenAt(row, col);
         },
 
         whoseTurn: () => {
@@ -496,7 +352,6 @@ function createGame(
 }
 
 export {
-    createBoardCell,
     createGameBoard,
     createPlayer,
     createGame

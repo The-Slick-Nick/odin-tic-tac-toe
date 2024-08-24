@@ -1,11 +1,6 @@
-import { createBoardCell, createGameBoard, createPlayer, createGame } from "./ttt/ttt.js"
-
-const boardTarget = document.querySelector(".gameboard-container");
-const labelTarget = document.querySelector(".label-container");
+import { createPlayer, createGame } from "./ttt/ttt.js"
 
 const statusLbl = document.querySelector(".status-lbl");
-
-
 
 const p1Input = document.querySelector("#firstplayer-name");
 const p2Input = document.querySelector("#secondplayer-name");
@@ -37,23 +32,52 @@ function updateStatus(game) {
 
 function setup() {
 
-    if (null !== p1) {
-        p1.destroy();
-    }
-
-    if (null !== p2) {
-        p2.destroy();
-    }
-
-    if (null !== gameobj) {
-        gameobj.destroy();
-    }
-
-    p1 = createPlayer(document, p1Input.value, "x");
-    p2 = createPlayer(document, p2Input.value, "o");
-    gameobj = createGame(document, p1, p2, boardTarget);
+    p1 = createPlayer(p1Input.value, "x");
+    p2 = createPlayer(p2Input.value, "o");
+    gameobj = createGame(p1, p2);
 
     gameobj.registerStateChangeCallback(() => updateStatus(gameobj));
+
+    document.querySelectorAll(".board-cell").forEach((cell) => {
+
+        let r = parseInt(
+            cell
+                .className
+                .split(" ")
+                .filter((cls) => cls.startsWith("row-"))
+            [0]
+                .split("-")
+            [1]
+        );
+
+        let c = parseInt(
+            cell
+                .className
+                .split(" ")
+                .filter((cls) => cls.startsWith("col-"))
+            [0]
+                .split("-")
+            [1]
+        );
+
+        cell.addEventListener("click", () => {
+            console.log(`Clicked ${r}, ${c}`);
+            gameobj.clickCell(r, c);
+        });
+
+
+        gameobj.registerStateChangeCallback(() => {
+            cell.classList.remove("token-x");
+            cell.classList.remove("token-o");
+            let token = gameobj.getTokenAt(r, c);
+            if (token === "x") {
+                cell.classList.add("token-x");
+            }
+            if (token === "o") {
+                cell.classList.add("token-o");
+            }
+        });
+    });
 }
 
 setup();

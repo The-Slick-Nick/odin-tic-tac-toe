@@ -1,7 +1,7 @@
 body {
     display: grid;
-    grid-template-rows: repeat(3, 1fr);
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, auto);
+    grid-template-columns: repeat(3, auto);
 }
 
 
@@ -40,7 +40,7 @@ body {
 
 }
 
-.board-frame {
+.gameboard {
     align-self: center;
     justify-self: center;
 
@@ -64,25 +64,17 @@ body {
     background-color: gray;
 }
 
-.board-cell>.token {
-    height: 100%;
-    width: 100%;
-}
-
-.x {
-    background-color: red;
-}
-
-.o {
+.token-o {
     background-color: blue;
+    border-radius: 50%;
+    border: 20px solid white;
+    width: 75%;
+    height: 75%;
+    background-color: transparent;
 }
 
-.board-token {
-    display: block;
-    height: 32px;
-    width: 32px;
-    stroke: green;
-    stroke-width: 3;
+.token-x {
+    background-color: red;
 }
 
 .label-container {

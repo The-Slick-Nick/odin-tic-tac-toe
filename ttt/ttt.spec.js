@@ -1,5 +1,10 @@
 
-import { createBoardCell, createPlayer, createGame, createGameBoard } from "./ttt.js"
+import { createPlayer, createGame, createGameBoard } from "./ttt.js"
+
+
+/******************************************************************************
+ * Mocks
+******************************************************************************/
 
 // mock a classList
 function createClassListMock() {
@@ -60,6 +65,10 @@ function createDocMock() {
 
 }
 
+/******************************************************************************
+ * Tests
+******************************************************************************/
+
 
 /* Test our tests just to be sure */
 describe("Test Mocks", () => {
@@ -105,61 +114,18 @@ describe("Test Mocks", () => {
 
 });
 
-describe("Test Board Cell", () => {
-
-    test("Destroy", () => {
-        const cell = createBoardCell(createDocMock(), 0, 0);
-        cell.destroy();
-        expect(cell.cellDom).toBe(null);
-    }),
-
-        test("Place a token", () => {
-            const doc = createDocMock();
-            const testCell = createBoardCell(doc, 0, 0);
-
-            testCell.placeToken("x");
-            expect(testCell.token).toEqual("x");
-        }),
-
-        test("No token", () => {
-            const doc = createDocMock();
-            const testCell = createBoardCell(doc, 0, 0);
-            expect(testCell.token).toEqual("");
-        }),
-
-        test("Get row", () => {
-            const doc = createDocMock();
-            const testCell = createBoardCell(doc, 1, 2);
-            expect(testCell.row).toEqual(1);
-        }),
-
-        test("Get col", () => {
-            const doc = createDocMock();
-            const testCell = createBoardCell(doc, 1, 2);
-            expect(testCell.col).toEqual(2);
-        })
-});
 
 describe("Test Board Object", () => {
 
-    test("Destroy", () => {
-
-        const board = createGameBoard(createDocMock());
-
-        board.destroy();
-        expect(board.boardDom).toBe(null);
-
+    test("Place token", () => {
+        const board = createGameBoard();
+        board.place("x", 1, 1);
+        const state = board.getState();
+        expect(state).toStrictEqual({
+            complete: false,
+            winner: ""
+        });
     }),
-
-        test("Place token", () => {
-            const board = createGameBoard(createDocMock());
-            board.place("x", 1, 1);
-            const state = board.getState();
-            expect(state).toStrictEqual({
-                complete: false,
-                winner: ""
-            });
-        }),
 
         test("Tie Game", () => {
             const board = createGameBoard(createDocMock());
@@ -277,30 +243,122 @@ describe("Test Board Object", () => {
                     winner: token
                 });
             });
-        }),
-
-        test("Get cell elem", () => {
-
-            const board = createGameBoard(createDocMock());
-            board.place("x", 0, 0);
-            board.place("o", 1, 1);
-
-            const xDom = board.boardDom.children[0];
-            const xcell = board.getCellFromDom(xDom);
-            expect(xcell.row).toEqual(0);
-            expect(xcell.col).toEqual(0);
-            expect(xcell.token).toEqual("x");
-
-            const oDom = board.boardDom.children[4];
-            const ocell = board.getCellFromDom(oDom);
-            expect(ocell.row).toEqual(1);
-            expect(ocell.col).toEqual(1);
-            expect(ocell.token).toEqual("o");
-
         })
 });
 
 
+
+describe("Test Game Object", () => {
+
+    test("Place token", () => {
+
+        const p1 = createPlayer("p1", "x");
+        const p2 = createPlayer("p2", "o");
+        const game = createGame(p1, p2);
+
+        game.clickCell(1, 1);
+
+        const state = game.getState();
+        expect(state).toEqual({
+            complete: false,
+            winner: null,
+            whoseTurn: p2
+        });
+
+        const token = game.getTokenAt(1, 1);
+        expect(token).toEqual("x");
+    }),
+
+        test("Place multiple", () => {
+            const p1 = createPlayer("p1", "x");
+            const p2 = createPlayer("p2", "o");
+            const game = createGame(p1, p2);
+
+            game.clickCell(1, 1);
+            game.clickCell(0, 0);
+
+            const state = game.getState();
+            expect(state).toEqual({
+                complete: false,
+                winner: null,
+                whoseTurn: p1
+            });
+
+            expect(game.getTokenAt(1, 1)).toEqual("x");
+            expect(game.getTokenAt(0, 0)).toEqual("o");
+        }),
+
+        test("Attempt overwrite", () => {
+            const p1 = createPlayer("p1", "x");
+            const p2 = createPlayer("p2", "o");
+            const game = createGame(p1, p2);
+
+            game.clickCell(1, 1);
+            game.clickCell(1, 1);
+
+            const state = game.getState();
+            expect(state).toEqual({
+                complete: false,
+                winner: null,
+                whoseTurn: p2  // didn't cycle
+            });
+
+            expect(game.getTokenAt(1, 1)).toEqual("x");
+        }),
+
+        test("A winner", () => {
+            const p1 = createPlayer("p1", "x");
+            const p2 = createPlayer("p2", "o");
+            const game = createGame(p1, p2);
+
+            game.clickCell(0, 0);
+            game.clickCell(1, 0);
+
+            game.clickCell(0, 1);
+            game.clickCell(1, 1);
+
+            game.clickCell(0, 2);
+            game.clickCell(1, 2);  // shouldn't register
+
+            const state = game.getState();
+            expect(state).toEqual({
+                complete: true,
+                winner: p1,
+                whoseTurn: null
+            });
+        }),
+
+        test("Tie game", () => {
+            const p1 = createPlayer("p1", "x");
+            const p2 = createPlayer("p2", "o");
+            const game = createGame(p1, p2);
+
+            /* x x o
+             * o o x
+             * x x o
+             */
+            game.clickCell(0, 0);
+            game.clickCell(1, 0);
+
+            game.clickCell(0, 1);
+            game.clickCell(1, 1);
+
+            game.clickCell(1, 2);
+            game.clickCell(0, 2);
+
+            game.clickCell(2, 0);
+            game.clickCell(2, 2);
+
+            game.clickCell(2, 1);
+
+            const state = game.getState();
+            expect(state).toEqual({
+                complete: true,
+                winner: null,
+                whoseTurn: null
+            });
+        })
+});
 
 export {
     createDocMock,
