@@ -103,13 +103,25 @@ describe("Test Board Cell", () => {
         const testCell = createBoardCell(doc, 0, 0);
 
         testCell.placeToken("x");
-        expect(testCell.currentToken()).toEqual("x");
+        expect(testCell.token).toEqual("x");
     }),
 
         test("No token", () => {
             const doc = createDocMock();
             const testCell = createBoardCell(doc, 0, 0);
-            expect(testCell.currentToken()).toEqual("");
+            expect(testCell.token).toEqual("");
+        }),
+
+        test("Get row", () => {
+            const doc = createDocMock();
+            const testCell = createBoardCell(doc, 1, 2);
+            expect(testCell.row).toEqual(1);
+        }),
+
+        test("Get col", () => {
+            const doc = createDocMock();
+            const testCell = createBoardCell(doc, 1, 2);
+            expect(testCell.col).toEqual(2);
         })
 });
 
@@ -211,6 +223,7 @@ describe("Test Board Object", () => {
                 }
             });
         }),
+
         test("Diagonals complete", () => {
             // Fill diagonals and check state
 
@@ -240,5 +253,18 @@ describe("Test Board Object", () => {
                     winner: token
                 });
             });
+        }),
+
+        test("Get cell elem", () => {
+
+            // const board = createGameBoard(createDocMock());
+            //
+            //
+            // const extCell = board.boardDom.children[0];
+            //
+            // const cell = board.getCellFromDom(extCell);
+            //
+            //
+            // board.place
         })
-})
+});

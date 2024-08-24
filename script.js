@@ -1,4 +1,4 @@
-import { createBoardCell, createBoard, createPlayer, runGame } from "./ttt.js"
+import { createBoardCell, createGameBoard, createPlayer, runGame } from "./ttt/ttt.js"
 
 
 

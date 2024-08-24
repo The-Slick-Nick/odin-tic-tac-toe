@@ -33,11 +33,25 @@ function createBoardCell(doc, row, col) {
         },
 
         // get current token, or empty string if none
-        currentToken: () => {
+        get token() {
             if (cellDom.children.length === 0) {
                 return "";
             }
             return cellDom.children[0].className.split("-")[1];
+        },
+
+        get row() {
+            cellDom.className.split(" ").forEach((cls) => {
+
+            });
+            return -1;
+        },
+
+        get col() {
+            cellDom.className.split(" ").forEach((cls) => {
+
+            });
+            return -1;
         }
     }
 }
@@ -220,9 +234,19 @@ function createGameBoard(doc) {
             complete: cellsFilled === 9,
             winner: ""
         };
+
+    }
+    // Get boardCell object from a passed dom element, returning null
+    // if it doesn't exist
+    function getCellFromDom(cellDom) {
+
+        return null;
     }
 
-    return { printBoard, place, resetBoard, getTokenAt, boardDom, getState };
+    return {
+        printBoard, place, resetBoard, getTokenAt, boardDom, getState,
+        getCellFromDom
+    };
 }
 
 
@@ -298,14 +322,21 @@ function runGame(doc, boardTarget, labelTarget) {
 
     board.boardDom.addEventListener("click", (e) => {
 
-        const cellElem = e.target;
-        const tokenElem = cellElem.querySelector(".board-token");
+        // ignore clicks on completed game
+        if (board.getState().complete) {
+            console.log("Game complete. ending");
+            return;
+        }
+
+        const cellDom = e.target;
+        // const cellElem = board.
+
 
         const currentPlayer = players[playerIdx];
 
         let rowcoord;
         let colcoord;
-        let token = "";
+        let token = cellElem.token;
 
         cellElem.className.split(" ").forEach((cls) => {
 
@@ -317,19 +348,6 @@ function runGame(doc, boardTarget, labelTarget) {
                 colcoord = parseInt(cls.split("-")[1]);
             }
         });
-
-        let tokenCls = tokenElem
-            .className
-            .split(" ")
-            .filter((elm) => elm.startsWith("token"))
-
-        if (tokenCls.length > 0) {
-            token = tokenCls[0].split("-")[1];
-        }
-        else {
-            token = "";
-        }
-
 
         if (token === "") {
             board.place(currentPlayer.token, rowcoord, colcoord);
