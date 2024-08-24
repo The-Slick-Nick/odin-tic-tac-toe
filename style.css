@@ -33,7 +33,7 @@ body {
     height: 25%;
 }
 
-.gameboard-container {
+.grid-center {
 
     grid-row: 2 / span 1;
     grid-column: 2 / span 1;

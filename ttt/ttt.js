@@ -2,6 +2,14 @@
  * ttt.js
  *
  * Tic-Tac-Toe game
+ *
+ * upon createGame, generates dom elements as
+ * .board-frame
+ *      .board-cell * 9
+ *          .token
+ *
+ *  Game object exposes a "boardDom" property, to be
+ *  added modularly to wherever.
  */
 
 
@@ -346,7 +354,7 @@ function createPlayer(doc, name, token, strategy = null) {
 
 
 function createGame(
-    doc, p1, p2, boardTarget, labelTarget
+    doc, p1, p2, boardTarget
 ) {
 
     const board = createGameBoard(doc);
@@ -356,8 +364,6 @@ function createGame(
     let playerIdx = 0;
 
     boardTarget.appendChild(board.boardDom);
-    labelTarget.appendChild(p1.scoreLabel);
-    labelTarget.appendChild(p2.scoreLabel);
 
     board.boardDom.addEventListener("click", (e) => {
 
@@ -410,6 +416,7 @@ function createGame(
     return {
         restart: () => {
             board.resetBoard();
+            playerIdx = 0;
         },
 
         // clear all game's elements from dom
@@ -420,7 +427,21 @@ function createGame(
         },
 
         // pass through
-        getState: board.getState,
+        getState: () => {
+            let bstate = board.getState();
+            let winner = null;
+            if (bstate.winner === 'x') {
+                winner = players[0];
+            }
+            else if (bstate.winner === 'o') {
+                winner = players[1];
+            }
+
+            return {
+                complete: bstate.complete,
+                winner: winner
+            };
+        },
 
         // Declare a callback to invoke upon board being
         // clicked
@@ -442,7 +463,16 @@ function createGame(
 
         get player2() {
             return p2;
+        },
+
+        get boardDom() {
+            return board.boardDom;
+        },
+
+        whoseTurn: () => {
+            return players[playerIdx];
         }
+
     };
 }
 
