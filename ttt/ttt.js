@@ -18,7 +18,9 @@ function createBoardCell(doc, row, col) {
     let token = "";
 
     return {
-        cellDom,
+        get cellDom() {
+            return cellDom;
+        },
 
         // place token, replacing any that currently exist
         placeToken: (toPlace) => {
@@ -226,18 +228,19 @@ function createGameBoard(doc) {
             complete: cellsFilled === 9,
             winner: ""
         };
-
     }
+
     // Get boardCell object from a passed dom element, returning null
     // if it doesn't exist
     function getCellFromDom(cellDom) {
 
-        const idx = boardElements.indexOf(cellDom);
-        if (idx === -1) {
-            return null;
-        }
+        for (let idx = 0; idx < 9; idx++) {
+            if (cellObjs[idx].cellDom === cellDom) {
+                return cellObjs[idx];
+            }
 
-        return boardElements[idx];
+        }
+        return null;
     }
 
     return {
