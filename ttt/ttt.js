@@ -8,19 +8,43 @@
 
 function createBoardCell(doc, row, col) {
 
-    const boardCell = doc.createElement("div");
+    const cellDom = doc.createElement("div");
 
-    boardCell.classList.add("board-cell");
-    boardCell.classList.add(`row-${row}`);
-    boardCell.classList.add(`col-${col}`);
+    cellDom.classList.add("board-cell");
+    cellDom.classList.add(`row-${row}`);
+    cellDom.classList.add(`col-${col}`);
 
-    const cellToken = doc.createElement("div");
-    cellToken.classList.add("board-token");
+    // const cellToken = doc.createElement("div");
+    // cellToken.classList.add("board-token");
+    //
+    // cellDom.appendChild(cellToken);
 
-    boardCell.appendChild(cellToken);
+    return {
+        cellDom,
 
-    return { cellDom: boardCell };
+        // place token, replacing any that currently exist
+        placeToken: (token) => {
+            token = token.toLowerCase();
+            if (token !== 'o' && token !== 'x') {
+                throw new Exception(`Invalid token ${token}`);
+            }
 
+            cellDom.children.forEach((elm) => cellDom.removeChild(elm));
+
+            const tokenDom = doc.createElement("div");
+            tokenDom.classList.add(`token-${token}`);
+            cellDom.appendChild(tokenDom);
+
+        },
+
+        // get current token, or empty string if none
+        currentToken: () => {
+            if (cellDom.children.length === 0) {
+                return "";
+            }
+            return cellDom.children[0].className.split("-")[1];
+        }
+    }
 }
 
 
