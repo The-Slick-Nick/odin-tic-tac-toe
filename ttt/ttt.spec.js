@@ -267,11 +267,19 @@ describe("Test Board Object", () => {
 
             const board = createGameBoard(createDocMock());
             board.place("x", 0, 0);
-            const extCell = board.boardDom.children[0];
+            board.place("o", 1, 1);
 
-            const cell = board.getCellFromDom(extCell);
-            expect(cell.row).toEqual(0);
-            expect(cell.col).toEqual(0);
-            expect(cell.token).toEqual("x");
+            const xDom = board.boardDom.children[0];
+            const xcell = board.getCellFromDom(xDom);
+            expect(xcell.row).toEqual(0);
+            expect(xcell.col).toEqual(0);
+            expect(xcell.token).toEqual("x");
+
+            const oDom = board.boardDom.children[4];
+            const ocell = board.getCellFromDom(oDom);
+            expect(ocell.row).toEqual(1);
+            expect(ocell.col).toEqual(1);
+            expect(ocell.token).toEqual("o");
+
         })
 });

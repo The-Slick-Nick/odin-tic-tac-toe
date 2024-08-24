@@ -32,7 +32,10 @@ function createBoardCell(doc, row, col) {
             token = toPlace;
             tokenDom = null;
 
-            cellDom.children.forEach((elm) => cellDom.removeChild(elm));
+            [].forEach.call(
+                cellDom.children,
+                (elm) => cellDom.removeChild(elm)
+            );
 
             tokenDom = doc.createElement("div");
             tokenDom.classList.add(`token-${token}`);
@@ -46,7 +49,11 @@ function createBoardCell(doc, row, col) {
             token = "";
             tokenDom = null;
 
-            cellDom.children.forEach((elm) => cellDom.removeChild(elm));
+            [].forEach.call(
+                cellDom.children,
+                (elm) => cellDom.removeChild(elm)
+            );
+            // cellDom.children.forEach((elm) => cellDom.removeChild(elm));
 
         },
 
@@ -69,9 +76,6 @@ function createBoardCell(doc, row, col) {
 // Create and return a GameBoard object
 // Take a reference to document
 function createGameBoard(doc) {
-
-    // const boardData = new Array(9);
-    // const boardElements = new Array(9);
 
     const cellObjs = new Array(9);
 
@@ -328,25 +332,31 @@ function runGame(doc, boardTarget, labelTarget) {
         }
 
         const cellDom = e.target;
-        // const cellElem = board.
+        const cellElem = board.getCellFromDom(cellDom);
 
+        if (cellElem === null) {
+            console.log("Ignoring click");
+            return;
+        }
 
         const currentPlayer = players[playerIdx];
 
-        let rowcoord;
-        let colcoord;
+        let rowcoord = cellElem.row;
+        let colcoord = cellElem.col;
         let token = cellElem.token;
 
-        cellElem.className.split(" ").forEach((cls) => {
+        console.log(`Clicked row ${rowcoord} col ${colcoord}`);
 
-            if (cls.startsWith("row")) {
-                rowcoord = parseInt(cls.split("-")[1]);
-            }
-
-            if (cls.startsWith("col")) {
-                colcoord = parseInt(cls.split("-")[1]);
-            }
-        });
+        // cellElem.className.split(" ").forEach((cls) => {
+        //
+        //     if (cls.startsWith("row")) {
+        //         rowcoord = parseInt(cls.split("-")[1]);
+        //     }
+        //
+        //     if (cls.startsWith("col")) {
+        //         colcoord = parseInt(cls.split("-")[1]);
+        //     }
+        // });
 
         if (token === "") {
             board.place(currentPlayer.token, rowcoord, colcoord);
@@ -368,7 +378,6 @@ function runGame(doc, boardTarget, labelTarget) {
                         }
                     });
                 }
-                board.resetBoard();
             }
 
 
