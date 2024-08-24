@@ -26,7 +26,7 @@ function createBoardCell(doc, row, col) {
         placeToken: (toPlace) => {
             toPlace = toPlace.toLowerCase();
             if (toPlace !== 'o' && toPlace !== 'x') {
-                throw new Exception(`Invalid toPlace ${toPlace}`);
+                throw new Error(`Invalid token ${toPlace}`);
             }
 
             token = toPlace;
@@ -345,10 +345,12 @@ function createPlayer(doc, name, token, strategy = null) {
 }
 
 
-function createGame(doc, boardTarget, labelTarget) {
+function createGame(
+    doc, p1, p2, boardTarget, labelTarget
+) {
 
-    const p1 = createPlayer(doc, 'x');
-    const p2 = createPlayer(doc, 'o');
+    // const p1 = createPlayer(doc, 'x');
+    // const p2 = createPlayer(doc, 'o');
     const board = createGameBoard(doc);
 
     const players = [p1, p2];
