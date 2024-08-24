@@ -14,11 +14,6 @@ function createBoardCell(doc, row, col) {
     cellDom.classList.add(`row-${row}`);
     cellDom.classList.add(`col-${col}`);
 
-    // const cellToken = doc.createElement("div");
-    // cellToken.classList.add("board-token");
-    //
-    // cellDom.appendChild(cellToken);
-
     return {
         cellDom,
 
@@ -50,7 +45,7 @@ function createBoardCell(doc, row, col) {
 
 // Create and return a GameBoard object
 // Take a reference to document
-function createBoard(doc) {
+function createGameBoard(doc) {
 
     const boardData = new Array(9);
     const boardElements = new Array(9);
@@ -130,7 +125,6 @@ function createBoard(doc) {
     // complete: boolean - is the game over
     // winner: winning token, if any. If nobody won, is null
     function getState() {
-
 
         // rows
         for (let ckRow = 0; ckRow < 3; ckRow++) {
@@ -298,7 +292,7 @@ function runGame(doc) {
 
     const p1 = createPlayer(doc, 'x');
     const p2 = createPlayer(doc, 'o');
-    const board = createBoard(doc);
+    const board = createGameBoard(doc);
 
     const players = [p1, p2];
     let playerIdx = 0;
@@ -380,7 +374,7 @@ function runGame(doc) {
 
 export {
     createBoardCell,
-    createBoard,
+    createGameBoard,
     createPlayer,
     runGame
 };

@@ -1,5 +1,5 @@
 
-import { createBoardCell, createBoard, createPlayer, runGame } from "./ttt.js"
+import { createBoardCell, createPlayer, runGame, createGameBoard } from "./ttt.js"
 
 // mock a classList
 function createClassListMock() {
@@ -113,3 +113,132 @@ describe("Test Board Cell", () => {
         })
 });
 
+describe("Test Board Object", () => {
+
+    test("Place token", () => {
+        const board = createGameBoard(createDocMock());
+        board.place("x", 1, 1);
+        const state = board.getState();
+        expect(state).toBe({
+            complete: false,
+            winner: ""
+        });
+    }),
+
+        test("Tie Game", () => {
+            const board = createGameBoard(createDocMock());
+            /* x x o
+             * o o x
+             * x x o
+             */
+            board.place("x", 0, 0);
+            board.place("x", 0, 1);
+            board.place("o", 0, 2);
+            board.place("o", 1, 0);
+            board.place("o", 1, 1);
+            board.place("x", 1, 2);
+            board.place("x", 2, 0);
+            board.place("x", 2, 1);
+            board.place("o", 2, 2);
+
+            const state = board.getState();
+            expect(state).toBe({
+                complete: true,
+                winner: ""
+            });
+        }),
+
+        test("Clear board", () => {
+
+            // create it
+            const board = createGameBoard(createDocMock());
+
+            // fill it
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    board.place("x", r, c);
+                }
+            }
+
+            // clear it
+            board.resetBoard();
+
+            const state = board.getState();
+            expect(state).toBe({
+                complete: false,
+                winner: ""
+            });
+        }),
+
+        test("Rows complete", () => {
+            // Fill rows and check state
+
+            const board = createGameBoard(createDocMock());
+
+            // make sure both tokens can win
+            ["x", "o"].forEach((token) => {
+                for (let r = 0; r < 3; r++) {
+                    board.resetBoard();
+                    for (let c = 0; c < 3; c++) {
+                        board.place(token, r, c);
+                    }
+                    const state = board.getState();
+                    expect(state).toBe({
+                        complete: true,
+                        winner: token
+                    });
+                }
+            });
+        }),
+
+        test("Columns complete", () => {
+            // Fill columns and check state
+
+            const board = createGameBoard(createDocMock());
+
+            // make sure both tokens can win
+            ["x", "o"].forEach((token) => {
+                for (let c = 0; c < 3; c++) {
+                    board.resetBoard();
+                    for (let r = 0; r < 3; r++) {
+                        board.place(token, r, c);
+                    }
+                    const state = board.getState();
+                    expect(state).toBe({
+                        complete: true,
+                        winner: token
+                    });
+                }
+            });
+        }),
+        test("Diagonals complete", () => {
+            // Fill diagonals and check state
+
+            const board = createGameBoard(createDocMock());
+
+            ["x", "o"].forEach((token) => {
+
+                // se
+                board.resetBoard();
+                for (let r = 0; r < 3; r++) {
+                    board.place(token, r, r);
+                }
+                let state = board.getState();
+                expect(state).toBe({
+                    complete: true,
+                    winner: token
+                });
+
+                // sw
+                board.resetBoard();
+                for (let r = 0; r < 3; r++) {
+                    board.place(token, r, 2 - r);
+                }
+                state = board.getState();
+                expect(state).toBe({
+                    complete: true,
+                    winner: token
+                });
+            });
+        })
+})
