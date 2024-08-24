@@ -40,6 +40,8 @@ function setup() {
 
     document.querySelectorAll(".board-cell").forEach((cell) => {
 
+        cell.childNodes.forEach((child) => child.remove());
+
         let r = parseInt(
             cell
                 .className
@@ -69,11 +71,41 @@ function setup() {
         gameobj.registerStateChangeCallback(() => {
             cell.classList.remove("token-x");
             cell.classList.remove("token-o");
+
+            // delete visual elements
+            cell.childNodes.forEach((child) => child.remove());
+
+
+            // ... and then create new ones
             let token = gameobj.getTokenAt(r, c);
             if (token === "x") {
+
+
+
                 cell.classList.add("token-x");
             }
             if (token === "o") {
+
+                let circleSvg = document.createElementNS(
+                    "http://www.w3.org/2000/svg", "svg"
+                );
+                circleSvg.setAttribute("height", 200);
+                circleSvg.setAttribute("width", 200);
+
+                circleSvg.classList.add("token-o");
+
+                let circleElm = document.createElementNS(
+                    "http://www.w3.org/2000/svg", "circle"
+                );
+                circleElm.setAttribute("cx", 100);
+                circleElm.setAttribute("cy", 50);
+                circleElm.setAttribute("r", 40);
+                circleElm.setAttribute("stroke", "black");
+                circleElm.setAttribute("stroke-width", "7");
+                circleElm.setAttribute("fill", "none");
+
+                circleSvg.appendChild(circleElm);
+                cell.appendChild(circleSvg);
                 cell.classList.add("token-o");
             }
         });
