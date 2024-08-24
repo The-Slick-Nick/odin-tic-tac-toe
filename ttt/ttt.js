@@ -51,7 +51,7 @@ function createGameBoard(doc) {
     const boardElements = new Array(9);
 
     for (let i = 0; i < 9; i++) {
-        boardData[i] = null;  // use null, not undefined
+        boardData[i] = "";
     }
 
     const boardDom = doc.createElement("div");
@@ -102,7 +102,7 @@ function createGameBoard(doc) {
 
     function resetBoard() {
         for (let i = 0; i < 9; i++) {
-            boardData[i] = null;
+            boardData[i] = "";
             const allClasses = boardElements[i].cellDom.className;
             if (allClasses) {
                 allClasses
@@ -118,13 +118,13 @@ function createGameBoard(doc) {
     // Assess the state of the game board
     // Returns:
     // complete: boolean - is the game over
-    // winner: winning token, if any. If nobody won, is null
+    // winner: winning token, if any. If nobody won, empty string
     function getState() {
 
         // rows
         for (let ckRow = 0; ckRow < 3; ckRow++) {
             let basis = boardData[0 + 3 * ckRow];
-            if (basis === null) {
+            if (basis === "") {
                 continue;
             }
 
@@ -137,7 +137,6 @@ function createGameBoard(doc) {
             }
 
             if (rowMatch) {
-                alert("ROW " + ckRow + " ALL MATCHING");
                 return {
                     complete: true,
                     winner: basis
@@ -149,7 +148,7 @@ function createGameBoard(doc) {
         // columns
         for (let ckCol = 0; ckCol < 3; ckCol++) {
             let basis = boardData[ckCol];
-            if (basis === null) {
+            if (basis === "") {
                 continue;
             }
 
@@ -171,7 +170,7 @@ function createGameBoard(doc) {
 
         // diagonals
         let basis = boardData[0];
-        if (basis !== null) {
+        if (basis !== "") {
             let diagSeMatch = true;
             for (let ckIdx = 0; ckIdx < 3; ckIdx++) {
 
@@ -189,7 +188,7 @@ function createGameBoard(doc) {
         }
 
         basis = boardData[2];
-        if (basis !== null) {
+        if (basis !== "") {
             let diagSwMatch = true;
             for (let ckIdx = 0; ckIdx < 3; ckIdx++) {
 
@@ -211,7 +210,7 @@ function createGameBoard(doc) {
         let cellsFilled = 0;
         for (let ckRow = 0; ckRow < 3; ckRow++) {
             for (let ckCol = 0; ckCol < 3; ckCol++) {
-                if (boardData[ckCol + ckRow * 3] !== null) {
+                if (boardData[ckCol + ckRow * 3] !== "") {
                     cellsFilled++;
                 }
             }
@@ -219,7 +218,7 @@ function createGameBoard(doc) {
 
         return {
             complete: cellsFilled === 9,
-            winner: null
+            winner: ""
         };
     }
 
@@ -233,11 +232,11 @@ function createGameBoard(doc) {
  *
  * @param doc - DOM "document" reference or equivalent mock
  * @param player_token - Single character token player will use. "x" or "o"
- * @param strategy - Default null - Function taking a gameBoard object and
- *                   returning a chosen location to play a token. If null,
+ * @param strategy - Default "" - Function taking a gameBoard object and
+ *                   returning a chosen location to play a token. If "",
  *                   defaults to waiting for human input
  */
-function createPlayer(doc, player_token, strategy = null) {
+function createPlayer(doc, player_token, strategy = "") {
     let wins = 0;
     let losses = 0;
 
@@ -245,8 +244,6 @@ function createPlayer(doc, player_token, strategy = null) {
     scoreLabel.classList.add(`token-${player_token}`);
     scoreLabel.classList.add("score-label");
     scoreLabel.innerText = wins;
-
-    let token = player_token;
 
     function getWins() {
         return wins;
@@ -270,12 +267,15 @@ function createPlayer(doc, player_token, strategy = null) {
     }
 
     function getToken() {
-        return token;
+        return player_token;
     }
 
     return {
         getWins, getLosses, win, lose, setToken, getToken,
-        scoreLabel, strategy
+        scoreLabel, strategy,
+        get token() {
+            return player_token;
+        }
     };
 }
 
@@ -307,7 +307,7 @@ function runGame(doc) {
 
         let rowcoord;
         let colcoord;
-        let token = null;
+        let token = "";
 
         cellElem.className.split(" ").forEach((cls) => {
 
@@ -329,33 +329,29 @@ function runGame(doc) {
             token = tokenCls[0].split("-")[1];
         }
         else {
-            token = null;
+            token = "";
         }
 
 
-        if (token === null) {
-            board.place(currentPlayer.getToken(), rowcoord, colcoord);
+        if (token === "") {
+            board.place(currentPlayer.token, rowcoord, colcoord);
 
             // check for a winner
 
             let boardState = board.getState();
 
             if (boardState.complete) {
-                alert("Game is complete!");
-                if (boardState.winner !== null) {
+                if (boardState.winner !== "") {
 
                     // use token to filter for winner
                     players.forEach((p) => {
-                        if (p.getToken() === boardState.winner) {
+                        if (p.token === boardState.winner) {
                             p.win();
                         }
                         else {
                             p.lose();
                         }
                     });
-                }
-                else {
-                    alert("Nobody won!");
                 }
                 board.resetBoard();
             }
