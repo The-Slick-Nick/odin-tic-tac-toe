@@ -280,10 +280,8 @@ function createPlayer(doc, player_token, strategy = "") {
 }
 
 
-function runGame(doc) {
+function runGame(doc, boardTarget, labelTarget) {
 
-    const boardTarget = doc.querySelector(".gameboard-container");
-    const labelTarget = doc.querySelector(".label-container");
 
     const p1 = createPlayer(doc, 'x');
     const p2 = createPlayer(doc, 'o');
