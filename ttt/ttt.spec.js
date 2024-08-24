@@ -119,7 +119,7 @@ describe("Test Board Object", () => {
         const board = createGameBoard(createDocMock());
         board.place("x", 1, 1);
         const state = board.getState();
-        expect(state).toBe({
+        expect(state).toStrictEqual({
             complete: false,
             winner: ""
         });
@@ -142,7 +142,7 @@ describe("Test Board Object", () => {
             board.place("o", 2, 2);
 
             const state = board.getState();
-            expect(state).toBe({
+            expect(state).toStrictEqual({
                 complete: true,
                 winner: ""
             });
@@ -164,7 +164,7 @@ describe("Test Board Object", () => {
             board.resetBoard();
 
             const state = board.getState();
-            expect(state).toBe({
+            expect(state).toStrictEqual({
                 complete: false,
                 winner: ""
             });
@@ -183,7 +183,7 @@ describe("Test Board Object", () => {
                         board.place(token, r, c);
                     }
                     const state = board.getState();
-                    expect(state).toBe({
+                    expect(state).toStrictEqual({
                         complete: true,
                         winner: token
                     });
@@ -204,7 +204,7 @@ describe("Test Board Object", () => {
                         board.place(token, r, c);
                     }
                     const state = board.getState();
-                    expect(state).toBe({
+                    expect(state).toStrictEqual({
                         complete: true,
                         winner: token
                     });
@@ -224,7 +224,7 @@ describe("Test Board Object", () => {
                     board.place(token, r, r);
                 }
                 let state = board.getState();
-                expect(state).toBe({
+                expect(state).toStrictEqual({
                     complete: true,
                     winner: token
                 });
@@ -235,7 +235,7 @@ describe("Test Board Object", () => {
                     board.place(token, r, 2 - r);
                 }
                 state = board.getState();
-                expect(state).toBe({
+                expect(state).toStrictEqual({
                     complete: true,
                     winner: token
                 });

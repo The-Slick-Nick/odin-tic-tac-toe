@@ -92,12 +92,7 @@ function createGameBoard(doc) {
         boardData[idx] = token;
         console.log("Attempting to access idx " + idx);
 
-        boardElements[idx]
-            .cellDom
-            .querySelector(".board-token")
-            .classList
-            .add(`token-${token}`);
-
+        boardElements[idx].placeToken(token);
     }
 
     function getTokenAt(row, column) {
