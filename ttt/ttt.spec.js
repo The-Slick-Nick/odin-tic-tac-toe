@@ -265,14 +265,13 @@ describe("Test Board Object", () => {
 
         test("Get cell elem", () => {
 
-            // const board = createGameBoard(createDocMock());
-            //
-            //
-            // const extCell = board.boardDom.children[0];
-            //
-            // const cell = board.getCellFromDom(extCell);
-            //
-            //
-            // board.place
+            const board = createGameBoard(createDocMock());
+            board.place("x", 0, 0);
+            const extCell = board.boardDom.children[0];
+
+            const cell = board.getCellFromDom(extCell);
+            expect(cell.row).toEqual(0);
+            expect(cell.col).toEqual(0);
+            expect(cell.token).toEqual("x");
         })
 });

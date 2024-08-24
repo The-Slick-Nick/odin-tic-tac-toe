@@ -14,30 +14,43 @@ function createBoardCell(doc, row, col) {
     cellDom.classList.add(`row-${row}`);
     cellDom.classList.add(`col-${col}`);
 
+    let tokenDom = null;
+    let token = "";
+
     return {
         cellDom,
 
         // place token, replacing any that currently exist
-        placeToken: (token) => {
-            token = token.toLowerCase();
-            if (token !== 'o' && token !== 'x') {
-                throw new Exception(`Invalid token ${token}`);
+        placeToken: (toPlace) => {
+            toPlace = toPlace.toLowerCase();
+            if (toPlace !== 'o' && toPlace !== 'x') {
+                throw new Exception(`Invalid toPlace ${toPlace}`);
             }
+
+            token = toPlace;
+            tokenDom = null;
 
             cellDom.children.forEach((elm) => cellDom.removeChild(elm));
 
-            const tokenDom = doc.createElement("div");
+            tokenDom = doc.createElement("div");
             tokenDom.classList.add(`token-${token}`);
+
             cellDom.appendChild(tokenDom);
+
+        },
+
+        removeToken: () => {
+
+            token = "";
+            tokenDom = null;
+
+            cellDom.children.forEach((elm) => cellDom.removeChild(elm));
 
         },
 
         // get current token, or empty string if none
         get token() {
-            if (cellDom.children.length === 0) {
-                return "";
-            }
-            return cellDom.children[0].className.split("-")[1];
+            return token;
         },
 
         get row() {
@@ -55,12 +68,10 @@ function createBoardCell(doc, row, col) {
 // Take a reference to document
 function createGameBoard(doc) {
 
-    const boardData = new Array(9);
-    const boardElements = new Array(9);
+    // const boardData = new Array(9);
+    // const boardElements = new Array(9);
 
-    for (let i = 0; i < 9; i++) {
-        boardData[i] = "";
-    }
+    const cellObjs = new Array(9);
 
     const boardDom = doc.createElement("div");
     boardDom.classList.add("board-frame");
@@ -74,9 +85,7 @@ function createGameBoard(doc) {
 
             const boardCell = createBoardCell(doc, r, c);
             boardDom.appendChild(boardCell.cellDom);
-
-            boardElements[idx] = boardCell;
-
+            cellObjs[idx] = boardCell;
         }
     }
 
@@ -87,7 +96,7 @@ function createGameBoard(doc) {
             for (let c = 0; c < 3; c++) {
 
                 let idx = c + 3 * r;
-                printstr += (boardData[idx] ? boardData[idx] : " ") + "|";
+                printstr += cellObjs[idx].token;
             }
             console.log(printstr);
         }
@@ -97,29 +106,18 @@ function createGameBoard(doc) {
     // if placement invalid
     function place(token, row, column) {
         let idx = column + 3 * row;
-        boardData[idx] = token;
-        console.log("Attempting to access idx " + idx);
 
-        boardElements[idx].placeToken(token);
+        cellObjs[idx].placeToken(token);
     }
 
     function getTokenAt(row, column) {
         let idx = column + 3 * row;
-        return boardData[idx];
+        return cellObjs[idx].token;
     }
 
     function resetBoard() {
         for (let i = 0; i < 9; i++) {
-            boardData[i] = "";
-            const allClasses = boardElements[i].cellDom.className;
-            if (allClasses) {
-                allClasses
-                    .split(" ")
-                    .filter(c => c.startsWith("token"))
-                    .forEach((cl) => {
-                        boardElements[i].cellDom.classList.remove(cl);
-                    });
-            }
+            cellObjs[i].removeToken();
         }
     }
 
@@ -131,14 +129,15 @@ function createGameBoard(doc) {
 
         // rows
         for (let ckRow = 0; ckRow < 3; ckRow++) {
-            let basis = boardData[0 + 3 * ckRow];
+
+            let basis = getTokenAt(ckRow, 0);
             if (basis === "") {
                 continue;
             }
 
             let rowMatch = true;
             for (let ckCol = 0; ckCol < 3; ckCol++) {
-                if (boardData[ckCol + ckRow * 3] !== basis) {
+                if (getTokenAt(ckRow, ckCol) !== basis) {
                     rowMatch = false;
                     break;
                 }
@@ -155,14 +154,14 @@ function createGameBoard(doc) {
 
         // columns
         for (let ckCol = 0; ckCol < 3; ckCol++) {
-            let basis = boardData[ckCol];
+            let basis = getTokenAt(0, ckCol);
             if (basis === "") {
                 continue;
             }
 
             let colMatch = true;
             for (let ckRow = 0; ckRow < 3; ckRow++) {
-                if (boardData[ckCol + ckRow * 3] !== basis) {
+                if (getTokenAt(ckRow, ckCol) !== basis) {
                     colMatch = false;
                     break;
                 }
@@ -177,12 +176,11 @@ function createGameBoard(doc) {
         }
 
         // diagonals
-        let basis = boardData[0];
+        let basis = getTokenAt(0, 0);
         if (basis !== "") {
             let diagSeMatch = true;
             for (let ckIdx = 0; ckIdx < 3; ckIdx++) {
-
-                if (boardData[ckIdx + ckIdx * 3] !== basis) {
+                if (getTokenAt(ckIdx, ckIdx) !== basis) {
                     diagSeMatch = false;
                     break;
                 }
@@ -195,12 +193,12 @@ function createGameBoard(doc) {
             }
         }
 
-        basis = boardData[2];
+        basis = getTokenAt(0, 2);
         if (basis !== "") {
             let diagSwMatch = true;
             for (let ckIdx = 0; ckIdx < 3; ckIdx++) {
 
-                if (boardData[2 - ckIdx + ckIdx * 3] !== basis) {
+                if (getTokenAt(ckIdx, 2 - ckIdx) !== basis) {
                     diagSwMatch = false;
                     break;
                 }
@@ -218,7 +216,7 @@ function createGameBoard(doc) {
         let cellsFilled = 0;
         for (let ckRow = 0; ckRow < 3; ckRow++) {
             for (let ckCol = 0; ckCol < 3; ckCol++) {
-                if (boardData[ckCol + ckRow * 3] !== "") {
+                if (getTokenAt(ckRow, ckCol) !== "") {
                     cellsFilled++;
                 }
             }
@@ -234,7 +232,12 @@ function createGameBoard(doc) {
     // if it doesn't exist
     function getCellFromDom(cellDom) {
 
-        return null;
+        const idx = boardElements.indexOf(cellDom);
+        if (idx === -1) {
+            return null;
+        }
+
+        return boardElements[idx];
     }
 
     return {
@@ -299,7 +302,6 @@ function createPlayer(doc, player_token, strategy = "") {
 
 
 function runGame(doc, boardTarget, labelTarget) {
-
 
     const p1 = createPlayer(doc, 'x');
     const p2 = createPlayer(doc, 'o');
