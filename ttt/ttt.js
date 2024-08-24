@@ -39,7 +39,8 @@ function createBoardCell(doc, row, col) {
             );
 
             tokenDom = doc.createElement("div");
-            tokenDom.classList.add(`token-${token}`);
+            tokenDom.classList.add("token");
+            tokenDom.classList.add(token);
 
             cellDom.appendChild(tokenDom);
 
@@ -286,19 +287,20 @@ function createGameBoard(doc) {
  * Create a player object
  *
  * @param doc - DOM "document" reference or equivalent mock
- * @param player_token - Single character token player will use. "x" or "o"
+ * @param name - String name used to refer to player. Musn't be empty
+ * @param token - Single character token player will use. "x" or "o"
  * @param strategy - Default "" - Function taking a gameBoard object and
  *                   returning a chosen location to play a token. If "",
  *                   defaults to waiting for human input
  */
-function createPlayer(doc, player_token, strategy = null) {
+function createPlayer(doc, name, token, strategy = null) {
     let wins = 0;
     let losses = 0;
 
     const scoreLabel = doc.createElement("div");
-    scoreLabel.classList.add(`token-${player_token}`);
+    scoreLabel.classList.add(`token-${token}`);
     scoreLabel.classList.add("score-label");
-    scoreLabel.innerText = wins;
+    scoreLabel.innerText = `${name}: ${wins}`;
 
     function getWins() {
         return wins;
@@ -310,19 +312,19 @@ function createPlayer(doc, player_token, strategy = null) {
 
     function win() {
         wins++;
-        scoreLabel.innerText = wins;
+        scoreLabel.innerText = `${name}: ${wins}`;
     }
 
     function lose() {
         losses++;
     }
 
-    function setToken(new_token) {
-        token = new_token;
+    function setToken(newToken) {
+        token = newToken;
     }
 
     function getToken() {
-        return player_token;
+        return token;
     }
 
     // clear/remove all created and appended dom elements
@@ -334,7 +336,10 @@ function createPlayer(doc, player_token, strategy = null) {
         getWins, getLosses, win, lose, setToken, getToken,
         scoreLabel, strategy, destroy,
         get token() {
-            return player_token;
+            return token;
+        },
+        get name() {
+            return name;
         }
     };
 }
@@ -357,7 +362,6 @@ function createGame(doc, boardTarget, labelTarget) {
 
         // ignore clicks on completed game
         if (board.getState().complete) {
-            console.log("Game complete. ending");
             return;
         }
 
@@ -365,7 +369,6 @@ function createGame(doc, boardTarget, labelTarget) {
         const cellElem = board.getCellFromDom(cellDom);
 
         if (cellElem === null) {
-            console.log("Ignoring click");
             return;
         }
 
@@ -374,8 +377,6 @@ function createGame(doc, boardTarget, labelTarget) {
         let rowcoord = cellElem.row;
         let colcoord = cellElem.col;
         let token = cellElem.token;
-
-        console.log(`Clicked row ${rowcoord} col ${colcoord}`);
 
         if (token === "") {
             board.place(currentPlayer.token, rowcoord, colcoord);

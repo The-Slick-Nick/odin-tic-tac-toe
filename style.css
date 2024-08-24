@@ -64,12 +64,17 @@ body {
     background-color: gray;
 }
 
-.board-cell>.token-x {
-    background-color: blue;
+.board-cell>.token {
+    height: 100%;
+    width: 100%;
 }
 
-.board-cell>.token-o {
+.x {
     background-color: red;
+}
+
+.o {
+    background-color: blue;
 }
 
 .board-token {
