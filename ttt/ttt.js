@@ -14,6 +14,8 @@
 
 
 
+
+
 function createBoardCell(doc, row, col) {
 
     let cellDom = doc.createElement("div");
@@ -380,43 +382,60 @@ function createGame(
         }
 
         const currentPlayer = players[playerIdx];
+        // ai, not clickable
+        if (currentPlayer.strategy !== null) {
+            return;
+        }
 
-        let rowcoord = cellElem.row;
-        let colcoord = cellElem.col;
-        let token = cellElem.token;
+        placeToken(currentPlayer.token, cellElem.row, cellElem.col);
+
+    });
+
+    function placeToken(token, row, col) {
+
+        // ignore completed game
+        // ends recursion (if 2 ai players)
+        if (board.getState().complete) {
+            return;
+        }
 
         if (token === "") {
-            board.place(currentPlayer.token, rowcoord, colcoord);
+            return;
+        }
 
-            // check for a winner
+        board.place(token, row, col);
 
-            let boardState = board.getState();
-
-            if (boardState.complete) {
-                if (boardState.winner !== "") {
-
-                    // use token to filter for winner
-                    players.forEach((p) => {
-                        if (p.token === boardState.winner) {
-                            p.win();
-                        }
-                        else {
-                            p.lose();
-                        }
-                    });
+        const boardState = board.getState();
+        if (boardState.complete && boardState.winner !== "") {
+            players.forEach((p) => {
+                if (p.token === boardState.winner) {
+                    p.win();
                 }
-            }
-
-
-            playerIdx = (playerIdx + 1) % players.length;
+                else {
+                    p.lose();
+                }
+            });
         }
 
         stateCallbacks.forEach((cb) => { cb(); });
-    });
+
+
+        playerIdx = (playerIdx + 1) % players.length;
+        if (players[playerIdx].strategy !== null) {
+            // call strategy(board) to determine cell to place
+            // perform placement after some time
+
+            let strat = players[playerIdx].strategy;
+            setTimeout(() => strat(board), 1000);
+        }
+
+    }
+
     return {
         restart: () => {
             board.resetBoard();
             playerIdx = 0;
+            stateCallbacks.forEach((cb) => cb());
         },
 
         // clear all game's elements from dom

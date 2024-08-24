@@ -299,3 +299,11 @@ describe("Test Board Object", () => {
 
         })
 });
+
+
+
+export {
+    createDocMock,
+    createDomMock,
+    createClassListMock
+};
