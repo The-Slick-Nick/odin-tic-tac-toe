@@ -8,7 +8,7 @@
 
 function createBoardCell(doc, row, col) {
 
-    const cellDom = doc.createElement("div");
+    let cellDom = doc.createElement("div");
 
     cellDom.classList.add("board-cell");
     cellDom.classList.add(`row-${row}`);
@@ -32,6 +32,7 @@ function createBoardCell(doc, row, col) {
             token = toPlace;
             tokenDom = null;
 
+            // ... because .children has no .forEach()
             [].forEach.call(
                 cellDom.children,
                 (elm) => cellDom.removeChild(elm)
@@ -49,11 +50,11 @@ function createBoardCell(doc, row, col) {
             token = "";
             tokenDom = null;
 
+            // ... because .children has no .forEach()
             [].forEach.call(
                 cellDom.children,
                 (elm) => cellDom.removeChild(elm)
             );
-            // cellDom.children.forEach((elm) => cellDom.removeChild(elm));
 
         },
 
@@ -68,6 +69,18 @@ function createBoardCell(doc, row, col) {
 
         get col() {
             return col;
+        },
+
+        destroy: () => {
+
+            [].forEach.call(
+                cellDom.children,
+                (elm) => cellDom.removeChild(elm)
+            );
+            tokenDom = null;
+
+            cellDom.remove();
+            cellDom = null;
         }
     }
 }
@@ -79,7 +92,7 @@ function createGameBoard(doc) {
 
     const cellObjs = new Array(9);
 
-    const boardDom = doc.createElement("div");
+    let boardDom = doc.createElement("div");
     boardDom.classList.add("board-frame");
 
 
@@ -247,9 +260,23 @@ function createGameBoard(doc) {
         return null;
     }
 
+    function destroy() {
+        for (let idx = 0; idx < 9; idx++) {
+            cellObjs[idx].destroy();
+            cellObjs[idx] = null;
+        }
+
+        boardDom.remove();
+        boardDom = null;
+
+    }
+
     return {
         printBoard, place, resetBoard, getTokenAt, boardDom, getState,
-        getCellFromDom
+        getCellFromDom, destroy,
+        get boardDom() {
+            return boardDom;
+        }
     };
 }
 
@@ -264,7 +291,7 @@ function createGameBoard(doc) {
  *                   returning a chosen location to play a token. If "",
  *                   defaults to waiting for human input
  */
-function createPlayer(doc, player_token, strategy = "") {
+function createPlayer(doc, player_token, strategy = null) {
     let wins = 0;
     let losses = 0;
 
@@ -298,9 +325,14 @@ function createPlayer(doc, player_token, strategy = "") {
         return player_token;
     }
 
+    // clear/remove all created and appended dom elements
+    function destroy() {
+        scoreLabel.remove();
+    }
+
     return {
         getWins, getLosses, win, lose, setToken, getToken,
-        scoreLabel, strategy,
+        scoreLabel, strategy, destroy,
         get token() {
             return player_token;
         }
@@ -308,7 +340,7 @@ function createPlayer(doc, player_token, strategy = "") {
 }
 
 
-function runGame(doc, boardTarget, labelTarget) {
+function createGame(doc, boardTarget, labelTarget) {
 
     const p1 = createPlayer(doc, 'x');
     const p2 = createPlayer(doc, 'o');
@@ -320,8 +352,6 @@ function runGame(doc, boardTarget, labelTarget) {
     boardTarget.appendChild(board.boardDom);
     labelTarget.appendChild(p1.scoreLabel);
     labelTarget.appendChild(p2.scoreLabel);
-
-
 
     board.boardDom.addEventListener("click", (e) => {
 
@@ -346,17 +376,6 @@ function runGame(doc, boardTarget, labelTarget) {
         let token = cellElem.token;
 
         console.log(`Clicked row ${rowcoord} col ${colcoord}`);
-
-        // cellElem.className.split(" ").forEach((cls) => {
-        //
-        //     if (cls.startsWith("row")) {
-        //         rowcoord = parseInt(cls.split("-")[1]);
-        //     }
-        //
-        //     if (cls.startsWith("col")) {
-        //         colcoord = parseInt(cls.split("-")[1]);
-        //     }
-        // });
 
         if (token === "") {
             board.place(currentPlayer.token, rowcoord, colcoord);
@@ -384,13 +403,26 @@ function runGame(doc, boardTarget, labelTarget) {
             playerIdx = (playerIdx + 1) % players.length;
         }
     });
+    return {
+        restart: () => {
+            board.resetBoard();
+        },
 
+        // clear all game's elements from dom
+        destroy: () => {
+            p1.destroy();
+            p2.destroy();
+            board.destroy();
+        }
+
+
+    };
 }
 
 export {
     createBoardCell,
     createGameBoard,
     createPlayer,
-    runGame
+    createGame
 };
 

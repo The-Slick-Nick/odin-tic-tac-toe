@@ -1,5 +1,5 @@
 
-import { createBoardCell, createPlayer, runGame, createGameBoard } from "./ttt.js"
+import { createBoardCell, createPlayer, createGame, createGameBoard } from "./ttt.js"
 
 // mock a classList
 function createClassListMock() {
@@ -106,13 +106,20 @@ describe("Test Mocks", () => {
 });
 
 describe("Test Board Cell", () => {
-    test("Place a token", () => {
-        const doc = createDocMock();
-        const testCell = createBoardCell(doc, 0, 0);
 
-        testCell.placeToken("x");
-        expect(testCell.token).toEqual("x");
+    test("Destroy", () => {
+        const cell = createBoardCell(createDocMock(), 0, 0);
+        cell.destroy();
+        expect(cell.cellDom).toBe(null);
     }),
+
+        test("Place a token", () => {
+            const doc = createDocMock();
+            const testCell = createBoardCell(doc, 0, 0);
+
+            testCell.placeToken("x");
+            expect(testCell.token).toEqual("x");
+        }),
 
         test("No token", () => {
             const doc = createDocMock();
@@ -135,15 +142,24 @@ describe("Test Board Cell", () => {
 
 describe("Test Board Object", () => {
 
-    test("Place token", () => {
+    test("Destroy", () => {
+
         const board = createGameBoard(createDocMock());
-        board.place("x", 1, 1);
-        const state = board.getState();
-        expect(state).toStrictEqual({
-            complete: false,
-            winner: ""
-        });
+
+        board.destroy();
+        expect(board.boardDom).toBe(null);
+
     }),
+
+        test("Place token", () => {
+            const board = createGameBoard(createDocMock());
+            board.place("x", 1, 1);
+            const state = board.getState();
+            expect(state).toStrictEqual({
+                complete: false,
+                winner: ""
+            });
+        }),
 
         test("Tie Game", () => {
             const board = createGameBoard(createDocMock());
