@@ -41,17 +41,11 @@ function createBoardCell(doc, row, col) {
         },
 
         get row() {
-            cellDom.className.split(" ").forEach((cls) => {
-
-            });
-            return -1;
+            return row;
         },
 
         get col() {
-            cellDom.className.split(" ").forEach((cls) => {
-
-            });
-            return -1;
+            return col;
         }
     }
 }

@@ -94,7 +94,15 @@ describe("Test Mocks", () => {
             parent.appendChild(child);
             let output = parent.removeChild(child);
             expect(output.className).toEqual(child.className);
+        }),
+
+        test("Test className", () => {
+            let dom = createDomMock();
+            dom.classList.add("one");
+            dom.classList.add("two");
+            expect(dom.className).toEqual("one two");
         })
+
 });
 
 describe("Test Board Cell", () => {
