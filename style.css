@@ -63,26 +63,50 @@ body {
 
 }
 
-svg {
-    /* display: block; */
-    /* margin: auto; */
-    height: 100%;
-    width: 100%;
+@keyframes show {
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+
 
 }
+
+svg {
+    height: 95%;
+    width: 95%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+}
+
+svg>path {
+    fill: black;
+    stroke: none;
+}
+
+
+svg>path {
+    overflow: visible;
+    transform: scale(0.7);
+    transform-origin: center;
+    animation: show 100ms 0ms cubic-bezier(0.38, 0.97, 0.56, 0.76) forwards;
+}
+
 
 .board-cell {
     border: 1px solid black;
     height: 100%;
     width: 100%;
     display: flex;
-    justify-content: stretch;
-    align-items: stretch;
+    justify-content: center;
+    align-items: center;
 }
 
-.token-o>circle {
-    stroke-width: 15;
-}
 
 
 

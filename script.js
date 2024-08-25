@@ -70,15 +70,21 @@ function setup() {
 
 
         gameobj.registerStateChangeCallback(() => {
-            cell.classList.remove("token-x");
-            cell.classList.remove("token-o");
 
-            // delete visual elements
-            cell.childNodes.forEach((child) => child.remove());
-
-
-            // ... and then create new ones
             let token = gameobj.getTokenAt(r, c);
+
+            if (token === "") {
+                cell.childNodes.forEach((child) => child.remove());
+                return;
+            }
+
+            let tokenCls = `token-${token}`;
+            for (let child of cell.childNodes) {
+                if (child.classList.contains(tokenCls)) {
+                    return;
+                }
+            }
+
             if (token === "x") {
 
                 let xSvg = document.createElementNS(
@@ -101,29 +107,28 @@ function setup() {
 
                 xSvg.appendChild(xPath);
                 cell.appendChild(xSvg);
-                cell.classList.add("token-x");
             }
             if (token === "o") {
 
-                let circleSvg = document.createElementNS(
+                let oSvg = document.createElementNS(
                     "http://www.w3.org/2000/svg", "svg"
                 );
 
-                circleSvg.classList.add("token-o");
+                oSvg.setAttribute("viewBox", "0 0 100 100");
+                oSvg.setAttribute("xmlns", "https://www.w3.org/2000/svg");
+                oSvg.classList.add("token-o");
 
-                let circleElm = document.createElementNS(
-                    "http://www.w3.org/2000/svg", "circle"
+                let oPath = document.createElementNS(
+                    "http://www.w3.org/2000/svg", "path"
                 );
-                circleElm.setAttribute("cx", 50);
-                circleElm.setAttribute("cy", 50);
-                circleElm.setAttribute("r", 40);
-                circleElm.setAttribute("stroke", "black");
-                circleElm.setAttribute("stroke-width", "7");
-                circleElm.setAttribute("fill", "none");
+                oPath.setAttribute(
+                    "d",
+                    "m49.5,0 a49,49,0,1,0,1,0 z m0,20 a30,30,0,1,1,-1,0 z"
+                );
+                oPath.setAttribute("stroke", "black");
 
-                circleSvg.appendChild(circleElm);
-                cell.appendChild(circleSvg);
-                cell.classList.add("token-o");
+                oSvg.appendChild(oPath);
+                cell.appendChild(oSvg);
             }
         });
     });
