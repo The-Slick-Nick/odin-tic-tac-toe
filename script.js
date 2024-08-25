@@ -133,7 +133,7 @@ function setup() {
             }
         });
 
-        // token coloration depending on state
+        // Token coloration depending on state
         gameobj.registerStateChangeCallback(() => {
 
             let state = gameobj.getState();
@@ -151,25 +151,21 @@ function setup() {
                 return;
             }
 
-
-
             if (!state.complete) {
                 console.log("Nothing to do...");
                 return;
             }
 
-            let winCls = `token-${state.winner.token}`;
-
-            cell.childNodes.forEach((child) => {
-                child.classList.remove("winner");
-
-                if (child.classList.contains(winCls)) {
-                    child.classList.add("winner");
+            state.winPath.forEach((coord) => {
+                if (coord[0] !== r || coord[1] !== c) {
+                    return;
                 }
+
+                cell.childNodes.forEach((child) => {
+                    child.classList.remove("loser");
+                    child.classList.add("winner");
+                });
             });
-
-
-
         });
 
     });

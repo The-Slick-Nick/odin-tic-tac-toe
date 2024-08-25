@@ -37,9 +37,10 @@ function createGameBoard() {
     }
 
     // Assess the state of the game board
-    // Returns:
-    // complete: boolean - is the game over
-    // winner: winning token, if any. If nobody won, empty string
+    // Returns an object with:
+    //     complete: boolean - is the game over
+    //     winner: winning token, if any. If nobody won, empty string
+    //     winPath: array of [row, col] indices, if a winner was found
     function getState() {
 
         // rows
@@ -61,7 +62,8 @@ function createGameBoard() {
             if (rowMatch) {
                 return {
                     complete: true,
-                    winner: basis
+                    winner: basis,
+                    winPath: [[ckRow, 0], [ckRow, 1], [ckRow, 2]]
                 };
             }
         }
@@ -85,7 +87,8 @@ function createGameBoard() {
             if (colMatch) {
                 return {
                     complete: true,
-                    winner: basis
+                    winner: basis,
+                    winPath: [[0, ckCol], [1, ckCol], [2, ckCol]]
                 };
             }
         }
@@ -103,7 +106,8 @@ function createGameBoard() {
             if (diagSeMatch) {
                 return {
                     complete: true,
-                    winner: basis
+                    winner: basis,
+                    winPath: [[0, 0], [1, 1], [2, 2]]
                 }
             }
         }
@@ -122,7 +126,8 @@ function createGameBoard() {
             if (diagSwMatch) {
                 return {
                     complete: true,
-                    winner: basis
+                    winner: basis,
+                    winPath: [[0, 2], [1, 1], [2, 0]]
                 }
             }
         }
@@ -139,7 +144,8 @@ function createGameBoard() {
 
         return {
             complete: cellsFilled === 9,
-            winner: ""
+            winner: "",
+            winPath: []
         };
     }
 
@@ -156,7 +162,6 @@ function createGameBoard() {
 /**
  * Create a player object
  *
- * @param doc - DOM "document" reference or equivalent mock
  * @param name - String name used to refer to player. Musn't be empty
  * @param token - Single character token player will use. "x" or "o"
  * @param strategy - Default "" - Function taking a gameBoard object and
@@ -320,7 +325,8 @@ function createGame(p1, p2) {
             return {
                 complete: bstate.complete,
                 winner: winner,
-                whoseTurn: whoseTurn
+                whoseTurn: whoseTurn,
+                winPath: bstate.winPath
             };
         },
 

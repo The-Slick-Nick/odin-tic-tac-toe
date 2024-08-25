@@ -123,7 +123,8 @@ describe("Test Board Object", () => {
         const state = board.getState();
         expect(state).toStrictEqual({
             complete: false,
-            winner: ""
+            winner: "",
+            winPath: []
         });
     }),
 
@@ -146,7 +147,8 @@ describe("Test Board Object", () => {
             const state = board.getState();
             expect(state).toStrictEqual({
                 complete: true,
-                winner: ""
+                winner: "",
+                winPath: []
             });
         }),
 
@@ -168,7 +170,8 @@ describe("Test Board Object", () => {
             const state = board.getState();
             expect(state).toStrictEqual({
                 complete: false,
-                winner: ""
+                winner: "",
+                winPath: []
             });
         }),
 
@@ -187,7 +190,8 @@ describe("Test Board Object", () => {
                     const state = board.getState();
                     expect(state).toStrictEqual({
                         complete: true,
-                        winner: token
+                        winner: token,
+                        winPath: [[r, 0], [r, 1], [r, 2]]
                     });
                 }
             });
@@ -208,7 +212,9 @@ describe("Test Board Object", () => {
                     const state = board.getState();
                     expect(state).toStrictEqual({
                         complete: true,
-                        winner: token
+                        winner: token,
+                        winPath: [[0, c], [1, c], [2, c]]
+
                     });
                 }
             });
@@ -229,7 +235,8 @@ describe("Test Board Object", () => {
                 let state = board.getState();
                 expect(state).toStrictEqual({
                     complete: true,
-                    winner: token
+                    winner: token,
+                    winPath: [[0, 0], [1, 1], [2, 2]]
                 });
 
                 // sw
@@ -240,7 +247,8 @@ describe("Test Board Object", () => {
                 state = board.getState();
                 expect(state).toStrictEqual({
                     complete: true,
-                    winner: token
+                    winner: token,
+                    winPath: [[0, 2], [1, 1], [2, 0]]
                 });
             });
         })
@@ -262,7 +270,8 @@ describe("Test Game Object", () => {
         expect(state).toEqual({
             complete: false,
             winner: null,
-            whoseTurn: p2
+            whoseTurn: p2,
+            winPath: []
         });
 
         const token = game.getTokenAt(1, 1);
@@ -281,7 +290,8 @@ describe("Test Game Object", () => {
             expect(state).toEqual({
                 complete: false,
                 winner: null,
-                whoseTurn: p1
+                whoseTurn: p1,
+                winPath: []
             });
 
             expect(game.getTokenAt(1, 1)).toEqual("x");
@@ -300,7 +310,8 @@ describe("Test Game Object", () => {
             expect(state).toEqual({
                 complete: false,
                 winner: null,
-                whoseTurn: p2  // didn't cycle
+                whoseTurn: p2,  // didn't cycle
+                winPath: []
             });
 
             expect(game.getTokenAt(1, 1)).toEqual("x");
@@ -324,7 +335,8 @@ describe("Test Game Object", () => {
             expect(state).toEqual({
                 complete: true,
                 winner: p1,
-                whoseTurn: null
+                whoseTurn: null,
+                winPath: [[0, 0], [0, 1], [0, 2]]
             });
         }),
 
@@ -355,7 +367,8 @@ describe("Test Game Object", () => {
             expect(state).toEqual({
                 complete: true,
                 winner: null,
-                whoseTurn: null
+                whoseTurn: null,
+                winPath: []
             });
         })
 });
