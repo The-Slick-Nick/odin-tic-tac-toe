@@ -16,7 +16,13 @@
 // Take a reference to document
 function createGameBoard() {
 
-    const contents = ["", "", "", "", "", "", "", "", ""];
+    // TODO: Perhaps we make this assignable via argument?
+    const size = 3;
+    const contents = [];
+    for (let i = 0; i < size * size; i++) {
+        contents.push("");
+    }
+
 
     // place X or O in board. Return 0 if successful placement, or -1
     // if placement invalid
@@ -150,10 +156,8 @@ function createGameBoard() {
     }
 
     return {
-        place, resetBoard, getTokenAt, getState,
-        get boardDom() {
-            return boardDom;
-        }
+        get size() { return size; },
+        place, resetBoard, getTokenAt, getState
     };
 }
 
