@@ -69,6 +69,7 @@ function setup() {
         });
 
 
+        // Token addition/removal
         gameobj.registerStateChangeCallback(() => {
 
             let token = gameobj.getTokenAt(r, c);
@@ -131,6 +132,46 @@ function setup() {
                 cell.appendChild(oSvg);
             }
         });
+
+        // token coloration depending on state
+        gameobj.registerStateChangeCallback(() => {
+
+            let state = gameobj.getState();
+
+            if (!state.complete) {
+                return;
+            }
+
+            // tie - no winner
+            if (state.winner === null) {
+                cell.childNodes.forEach((child) => {
+                    child.classList.remove("winner");
+                    child.classList.add("loser");
+                });
+                return;
+            }
+
+
+
+            if (!state.complete) {
+                console.log("Nothing to do...");
+                return;
+            }
+
+            let winCls = `token-${state.winner.token}`;
+
+            cell.childNodes.forEach((child) => {
+                child.classList.remove("winner");
+
+                if (child.classList.contains(winCls)) {
+                    child.classList.add("winner");
+                }
+            });
+
+
+
+        });
+
     });
 }
 

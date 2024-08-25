@@ -98,6 +98,15 @@ svg>path {
 }
 
 
+svg.winner>path {
+    fill: green;
+}
+
+svg.loser>path {
+    fill: red;
+}
+
+
 .board-cell {
     border: 1px solid black;
     height: 100%;
