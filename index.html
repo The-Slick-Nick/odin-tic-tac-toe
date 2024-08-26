@@ -11,15 +11,36 @@
 <body>
 
     <div class="game-options-container">
+
         <div class="game-options-body">
+
             <div class="player-setup">
                 <input type="text" id="firstplayer-name" value="Player">
-                <label for="firstplayer-name">Player</label>
+
+                <!-- input scheme -->
+                <input type="radio" name="x-input-scheme" id="x-human" value="human">
+                <label for="x-human">Human</label>
+                <input type="radio" name="x-input-scheme" id="x-easy-ai" value="easy-ai">
+                <label for="x-easy-ai">Computer (Easy)</label>
+                <input type="radio" name="x-input-scheme" id="x-medium-ai" value="medium-ai">
+                <label for="x-medium-ai">Computer (Medium)</label>
+                <input type="radio" name="x-input-scheme" id="x-hard-ai" value="hard-ai">
+                <label for="x-hard-ai">Computer (Hard)</label>
+
             </div>
 
             <div class="player-setup">
                 <input type="text" id="secondplayer-name" value="Computer">
-                <label for="secondplayer-name">Player</label>
+
+                <!-- input scheme -->
+                <input type="radio" name="o-input-scheme" id="o-human" value="human">
+                <label for="o-human">Human</label>
+                <input type="radio" name="o-input-scheme" id="o-easy-ai" value="easy-ai">
+                <label for="o-easy-ai">Computer (Easy)</label>
+                <input type="radio" name="o-input-scheme" id="o-medium-ai" value="medium-ai">
+                <label for="o-medium-ai">Computer (Medium)</label>
+                <input type="radio" name="o-input-scheme" id="o-hard-ai" value="hard-ai">
+                <label for="o-hard-ai">Computer (Hard)</label>
             </div>
 
             <button class="options-submit">New Game!</button>

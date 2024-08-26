@@ -1,16 +1,33 @@
 import { createPlayer, createGame } from "./ttt/ttt.js"
 import { easyAiStrategy, mediumAiStrategy, hardAiStrategy } from "./ttt/strategy.js";
 
+
+/******************************************************************************
+ * Script globals
+******************************************************************************/
+
 const statusLbl = document.querySelector(".status-lbl");
 
 const p1Input = document.querySelector("#firstplayer-name");
 const p2Input = document.querySelector("#secondplayer-name");
+
+// buttons
 const newGameBtn = document.querySelector(".options-submit");
+const resetBtn = document.querySelector(".reset-btn");
+const optionsToggle = document.querySelector(".game-options-toggle");
+
+
+const optionsBody = document.querySelector(".game-options-body");
 
 
 let p1 = null;
 let p2 = null;
 let gameobj = null;
+
+
+/******************************************************************************
+ * Function utilities
+******************************************************************************/
 
 function updateStatus(game) {
     let state = game.getState();
@@ -30,7 +47,7 @@ function updateStatus(game) {
     statusLbl.innerText = lbltext;
 }
 
-
+// set up game based on option values
 function setup() {
 
     p1 = createPlayer(p1Input.value, "x", hardAiStrategy);
@@ -172,15 +189,34 @@ function setup() {
     });
 }
 
-setup();
-updateStatus(gameobj);
+/******************************************************************************
+ * Adding button logic
+******************************************************************************/
+
 newGameBtn.addEventListener("click", setup);
 
+resetBtn.addEventListener("click", (e) => {
 
-document.querySelector(".reset-btn").addEventListener("click", (e) => {
     statusLbl.innerText = "";
-    gameobj.start();
+    gameobj.start();  // restarts
     updateStatus(gameobj);
 });
+
+optionsToggle.addEventListener("click", (e) => {
+    // toggle options div
+
+    optionsBody.classList.toggle("collapsed-h");
+
+});
+
+
+/******************************************************************************
+ * Kicking things off
+******************************************************************************/
+
+setup();
+updateStatus(gameobj);
+
+
 
 
