@@ -333,6 +333,19 @@ function createWeightedStrategy(winW, myW, oppW, tiebreaker = null) {
  * Strategies
 ******************************************************************************/
 
+const easyAiStrategy = (token, board) => {
+
+    const possibleMoves = [];
+    for (let r = 0; r < board.size; r++) {
+        for (let c = 0; c < board.size; c++) {
+            if (board.getTokenAt(r, c) === "") {
+                possibleMoves.push([r, c]);
+            }
+        }
+    }
+    return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+}
+
 const mediumAiStrategy = createWeightedStrategy(1, 3, 2);
 
 const hardAiStrategy = (token, board) => {
@@ -349,6 +362,7 @@ const hardAiStrategy = (token, board) => {
 
 export {
     createWeightedStrategy,
+    easyAiStrategy,
     mediumAiStrategy,
     hardAiStrategy,
     calcBestMove
