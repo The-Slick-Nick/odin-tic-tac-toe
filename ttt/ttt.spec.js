@@ -223,7 +223,7 @@ describe("Test Board Object", () => {
         test("Diagonals complete", () => {
             // Fill diagonals and check state
 
-            const board = createGameBoard(createDocMock());
+            const board = createGameBoard();
 
             ["x", "o"].forEach((token) => {
 
@@ -251,7 +251,34 @@ describe("Test Board Object", () => {
                     winPath: [[0, 2], [1, 1], [2, 0]]
                 });
             });
-        })
+        }),
+
+        test("Copy", () => {
+
+            const board1 = createGameBoard(3);
+            board1.place("x", 0, 1);
+            board1.place("o", 1, 1);
+            board1.place("o", 2, 1);
+
+            const board2 = board1.copy();
+
+            expect(board2.size).toEqual(board1.size);
+
+            for (let r = 0; r < board2.size; r++) {
+                for (let c = 0; c < board2.size; c++) {
+
+                    expect(board2.getTokenAt(r, c))
+                        .toEqual(board1.getTokenAt(r, c));
+
+                }
+            }
+
+            board1.place("x", 2, 2);
+            expect(board2.getTokenAt(2, 2)).not.toEqual("x");
+            expect(board1).not.toBe(board2);
+
+
+        });
 });
 
 

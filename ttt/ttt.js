@@ -155,9 +155,28 @@ function createGameBoard() {
         };
     }
 
+    function copy() {
+
+        let newBoard = createGameBoard();
+        for (let r = 0; r < size; r++) {
+            for (let c = 0; c < size; c++) {
+                let idx = c + r * size;
+
+                if (contents[idx] !== "") {
+                    newBoard.place(contents[idx], r, c);
+                }
+
+            }
+        }
+        return newBoard;
+
+    }
+
+
+
     return {
         get size() { return size; },
-        place, resetBoard, getTokenAt, getState
+        place, resetBoard, getTokenAt, getState, copy
     };
 }
 
@@ -211,7 +230,7 @@ function createPlayer(name, token, strategy = null) {
             return name;
         },
 
-        executeStragegy: (board) => {
+        executeStrategy: (board) => {
             return strategy(token, board);
         }
 
@@ -288,9 +307,10 @@ function createGame(p1, p2) {
         const nextPlayer = players[playerIdx];
         if (nextPlayer.strategy !== null) {
 
-            let placement = executeStrategy(board);
+            let placement = nextPlayer.executeStrategy(board);
+
             setTimeout(
-                () => placeToken(nextPlayer.token, placement.row, placement.col),
+                () => placeToken(nextPlayer.token, placement[0], placement[1]),
                 1000
             );
         }
@@ -300,7 +320,7 @@ function createGame(p1, p2) {
     if (p1.strategy !== null) {
         let placement = p1.executeStrategy(board);
         setTimeout(
-            () => placeToken(p1.token, placement.row, placement.col),
+            () => placeToken(p1.token, placement[0], placement[1]),
             1000
         );
     }
