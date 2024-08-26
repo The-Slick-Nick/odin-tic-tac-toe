@@ -30,11 +30,11 @@ function updateStatus(game) {
     statusLbl.innerText = lbltext;
 }
 
-// TODO: 
+
 function setup() {
 
-    p1 = createPlayer(p1Input.value, "x");
-    p2 = createPlayer(p2Input.value, "o", hardAiStrategy);
+    p1 = createPlayer(p1Input.value, "x", hardAiStrategy);
+    p2 = createPlayer(p2Input.value, "o", mediumAiStrategy);
     gameobj = createGame(p1, p2);
 
     gameobj.registerStateChangeCallback(() => updateStatus(gameobj));
@@ -179,7 +179,7 @@ newGameBtn.addEventListener("click", setup);
 
 document.querySelector(".reset-btn").addEventListener("click", (e) => {
     statusLbl.innerText = "";
-    gameobj.restart();
+    gameobj.start();
     updateStatus(gameobj);
 });
 

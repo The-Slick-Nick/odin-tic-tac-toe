@@ -2,21 +2,13 @@
  * ttt.js
  *
  * Tic-Tac-Toe game
- *
- * upon createGame, generates dom elements as
- * .board-frame
- *      .board-cell * 9
- *          .token
- *
- *  Game object exposes a "boardDom" property, to be
- *  added modularly to wherever.
  */
 
-// Create and return a GameBoard object
-// Take a reference to document
+/**
+ * @brief Create game board object
+ */
 function createGameBoard() {
 
-    // TODO: Perhaps we make this assignable via argument?
     const size = 3;
     const contents = [];
     for (let i = 0; i < size * size; i++) {
@@ -311,6 +303,27 @@ function createGame(p1, p2) {
     const players = [p1, p2];
     let playerIdx = 0;
 
+    // Kick-off game - resets if not already running
+    function start() {
+
+        board.resetBoard();
+        playerIdx = 0;
+        stateCallbacks.forEach((cb) => cb());
+
+        const firstPlayer = players[playerIdx];
+        if (firstPlayer.strategy !== null) {
+            let placement = firstPlayer.executeStrategy(board);
+            let token = firstPlayer.token;
+
+            setTimeout(
+                () => placeToken(
+                    token, placement[0], placement[1]
+                ),
+                1000
+            );
+        }
+    }
+
     function clickCell(row, col) {
         // The "click" to come from an external listener
 
@@ -334,9 +347,11 @@ function createGame(p1, p2) {
             return;
         }
 
-        // TODO: Test for game.placeToken() at already placed spot
-
         if (token === "") {
+            return;
+        }
+
+        if (whoseTurn().token !== token) {
             return;
         }
 
@@ -356,81 +371,71 @@ function createGame(p1, p2) {
 
         stateCallbacks.forEach((cb) => { cb(); });
 
+        if (board.getState().complete) {
+            return;
+        }
+
+        // Schedule future turn
+
         playerIdx = (playerIdx + 1) % players.length;
         const nextPlayer = players[playerIdx];
         if (nextPlayer.strategy !== null) {
 
             let placement = nextPlayer.executeStrategy(board);
+            let token = nextPlayer.token;
 
             setTimeout(
-                () => placeToken(nextPlayer.token, placement[0], placement[1]),
+                () => placeToken(token, placement[0], placement[1]),
                 1000
             );
         }
+    }
+
+    function getState() {
+        let bstate = board.getState();
+        let winner = null;
+        players.forEach((player) => {
+            if (player.token === bstate.winner) {
+                winner = player;
+            }
+        });
+
+        let whoseTurn = bstate.complete ? null : players[playerIdx];
+        return {
+            complete: bstate.complete,
+            winner: winner,
+            whoseTurn: whoseTurn,
+            winPath: bstate.winPath
+        };
+    }
+
+    // register a callback to be invoked when
+    // the game state changes in some way.
+    // (this is needed eventually for AI players)
+    function registerStateChangeCallback(callback) {
+        stateCallbacks.push(callback);
 
     }
 
-    if (p1.strategy !== null) {
-        let placement = p1.executeStrategy(board);
-        setTimeout(
-            () => placeToken(p1.token, placement[0], placement[1]),
-            1000
-        );
+    function getTokenAt(row, col) {
+        return board.getTokenAt(row, col);
     }
+
+    function whoseTurn() {
+        return players[playerIdx];
+    }
+
+    start();
 
     return {
         clickCell,
-        restart: () => {
-            board.resetBoard();
-            playerIdx = 0;
-            stateCallbacks.forEach((cb) => cb());
-        },
-
-        // pass through
-        getState: () => {
-            let bstate = board.getState();
-
-            let winner = null;
-            players.forEach((player) => {
-                if (player.token === bstate.winner) {
-                    winner = player;
-                }
-            });
-
-            let whoseTurn = bstate.complete ? null : players[playerIdx];
-
-            return {
-                complete: bstate.complete,
-                winner: winner,
-                whoseTurn: whoseTurn,
-                winPath: bstate.winPath
-            };
-        },
-
-
-        // register a callback to be invoked when
-        // the game state changes in some way.
-        // (this is needed eventually for AI players)
-        registerStateChangeCallback: (callback) => {
-            stateCallbacks.push(callback);
-        },
-
-        get player1() {
-            return p1;
-        },
-
-        get player2() {
-            return p2;
-        },
-
-        getTokenAt: (row, col) => {
-            return board.getTokenAt(row, col);
-        },
-
-        whoseTurn: () => {
-            return players[playerIdx];
-        }
-
+        start,
+        registerStateChangeCallback,
+        getState,
+        getTokenAt,
+        whoseTurn,
+        get player1() { return p1; },
+        get player2() { return p2; }
     };
 }
 
