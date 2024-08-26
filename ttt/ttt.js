@@ -169,14 +169,67 @@ function createGameBoard() {
             }
         }
         return newBoard;
-
     }
 
+    function exportFingerprint(basisToken) {
 
+        let total = 0;
+        for (let i = 0; i < size * size; i++) {
+
+            total = (total * 3) + (
+                contents[i] === "" ? 0 :
+                    contents[i] === basisToken ? 1 : 2
+            );
+
+
+        }
+        return total;
+    }
+
+    function importFingerprint(fingerprint, basisToken, otherToken) {
+
+        // for (let i = 0; i < size * size; i++) {
+        for (let i = size * size - 1; i >= 0; i--) {
+
+            let code = fingerprint % 3;
+            if (code === 0) {
+                contents[i] = "";
+            }
+            else if (code === 1) {
+                contents[i] = basisToken;
+            }
+            else {
+                contents[i] = otherToken;
+            }
+
+            fingerprint = (fingerprint - code) / 3;
+        }
+    }
+
+    function printBoard(topBorder = false, bottomBorder = false) {
+
+        if (topBorder) {
+            console.log("-".repeat(80));
+        }
+
+        for (let r = 0; r < size; r++) {
+            let printstr = "";
+            for (let c = 0; c < size; c++) {
+                printstr += getTokenAt(r, c) + ", ";
+            }
+            console.log(printstr);
+        }
+
+        if (bottomBorder) {
+            console.log("-".repeat(80));
+        }
+    }
 
     return {
         get size() { return size; },
-        place, resetBoard, getTokenAt, getState, copy
+        place, resetBoard, getTokenAt, getState, copy,
+        exportFingerprint, importFingerprint,
+        printBoard
     };
 }
 

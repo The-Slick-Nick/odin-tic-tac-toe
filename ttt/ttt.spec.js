@@ -276,9 +276,29 @@ describe("Test Board Object", () => {
             board1.place("x", 2, 2);
             expect(board2.getTokenAt(2, 2)).not.toEqual("x");
             expect(board1).not.toBe(board2);
+        }),
+
+    test("Fingerprint", () => {
+
+        const board1 = createGameBoard();
+
+        board1.place("x", 0, 1);
+        board1.place("o", 1, 1);
+        board1.place("x", 2, 2);
+
+        const xprint = board1.exportFingerprint("x");
+        const oprint = board1.exportFingerprint("o");
 
 
-        });
+        expect(xprint).not.toEqual(oprint);
+
+        const board2 = createGameBoard();
+        board2.importFingerprint(xprint, "x", "o");
+
+        expect(board2.exportFingerprint("x")).toEqual(xprint);
+        expect(board2.exportFingerprint("o")).toEqual(oprint);
+
+    });
 });
 
 
