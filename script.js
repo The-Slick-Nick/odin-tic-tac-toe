@@ -1,5 +1,5 @@
 import { createPlayer, createGame } from "./ttt/ttt.js"
-import { basicAiStrategy } from "./ttt/strategy.js";
+import { mediumAiStrategy, hardAiStrategy } from "./ttt/strategy.js";
 
 const statusLbl = document.querySelector(".status-lbl");
 
@@ -11,9 +11,6 @@ const newGameBtn = document.querySelector(".options-submit");
 let p1 = null;
 let p2 = null;
 let gameobj = null;
-
-
-
 
 function updateStatus(game) {
     let state = game.getState();
@@ -37,7 +34,7 @@ function updateStatus(game) {
 function setup() {
 
     p1 = createPlayer(p1Input.value, "x");
-    p2 = createPlayer(p2Input.value, "o", basicAiStrategy);
+    p2 = createPlayer(p2Input.value, "o", hardAiStrategy);
     gameobj = createGame(p1, p2);
 
     gameobj.registerStateChangeCallback(() => updateStatus(gameobj));

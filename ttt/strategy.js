@@ -1,10 +1,22 @@
 import { createGameBoard } from "./ttt.js"
 
+/******************************************************************************
+ * Helpers/utilities
+******************************************************************************/
 
 const bestMoveMemo = Array(60000); // upper bound of possible states
 
 // Assess the "score" of a particular board state
 // @param boardArr - array representing a board (hypothetical or otherwise)
+
+/**
+ * @brief Assess and return a list of the best possible moves from a given
+ *        gameboard
+ * @param myToken - string token ("x" or "o") representing caller's piece
+ * @param oppToken - string token ("x" or "o") representing opponent's piece
+ * @param gameBoard - gameBoard object representing current board state.
+ * @param debug - Boolean flag determining if extra information is printed
+ */
 function calcBestMove(myToken, oppToken, gameBoard, debug = false) {
 
     if (debug) {
@@ -26,9 +38,6 @@ function calcBestMove(myToken, oppToken, gameBoard, debug = false) {
     let drawers = [];
     let losers = [];
 
-    if (debug) {
-        console.log(`Calculating fingerprint ${fingerprint}`);
-    }
     for (let r = 0; r < 3; r++) {
         for (let c = 0; c < 3; c++) {
 
@@ -82,15 +91,12 @@ function calcBestMove(myToken, oppToken, gameBoard, debug = false) {
     }
 
     if (winners.length > 0) {
-        if (debug) { console.log("Using winners"); }
         bestMoveMemo[fingerprint] = winners;
     }
     else if (drawers.length > 0) {
-        if (debug) { console.log("Using drawers"); }
         bestMoveMemo[fingerprint] = drawers;
     }
     else {
-        if (debug) { console.log("Using losers"); }
         bestMoveMemo[fingerprint] = losers;
     }
     if (debug) {
@@ -323,10 +329,27 @@ function createWeightedStrategy(winW, myW, oppW, tiebreaker = null) {
 
 }
 
-const basicAiStrategy = createWeightedStrategy(1, 3, 2);
+/******************************************************************************
+ * Strategies
+******************************************************************************/
+
+const mediumAiStrategy = createWeightedStrategy(1, 3, 2);
+
+const hardAiStrategy = (token, board) => {
+
+    // yields a list of equally good moves
+    const moveList = calcBestMove(token, token === "x" ? "o" : "x", board);
+
+    if (moveList.length === 0) {
+        throw new Error("No move could be calculated");
+    }
+
+    return moveList[Math.floor(Math.random() * moveList.length)];
+};
 
 export {
     createWeightedStrategy,
-    basicAiStrategy,
+    mediumAiStrategy,
+    hardAiStrategy,
     calcBestMove
 }

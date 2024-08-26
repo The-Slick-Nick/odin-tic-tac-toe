@@ -1,5 +1,5 @@
 import { createGameBoard, createPlayer } from "./ttt.js"
-import { basicAiStrategy, calcBestMove } from "./strategy.js"
+import { mediumAiStrategy, calcBestMove } from "./strategy.js"
 import { createDocMock } from "./ttt.spec.js"
 
 describe("Test basic strategy", () => {
@@ -8,7 +8,7 @@ describe("Test basic strategy", () => {
 
         const board = createGameBoard();
 
-        let result = basicAiStrategy("x", board);
+        let result = mediumAiStrategy("x", board);
         expect(result).toEqual([1, 1]);
     });
 
@@ -17,7 +17,7 @@ describe("Test basic strategy", () => {
 
         board.place("x", 0, 0);
         board.place("x", 0, 1);
-        const result = basicAiStrategy("x", board);
+        const result = mediumAiStrategy("x", board);
         expect(result).toEqual([0, 2]);
     });
 
@@ -27,7 +27,7 @@ describe("Test basic strategy", () => {
 
         board.place("x", 0, 0);
         board.place("x", 0, 1);
-        const result = basicAiStrategy("o", board);
+        const result = mediumAiStrategy("o", board);
         expect(result).toEqual([0, 2]);
     });
 
@@ -38,7 +38,7 @@ describe("Test basic strategy", () => {
         board.place("o", 0, 1);
         board.place("x", 2, 0);
         board.place("x", 2, 1);
-        const result = basicAiStrategy("x", board);
+        const result = mediumAiStrategy("x", board);
         expect(result).toEqual([2, 2]);
     });
 });
