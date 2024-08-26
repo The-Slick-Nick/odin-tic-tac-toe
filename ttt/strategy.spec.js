@@ -1,5 +1,5 @@
 import { createGameBoard, createPlayer } from "./ttt.js"
-import { basicAiStrategy } from "./strategy.js"
+import { basicAiStrategy, calcBestMove } from "./strategy.js"
 import { createDocMock } from "./ttt.spec.js"
 
 describe("Test basic strategy", () => {
@@ -42,6 +42,179 @@ describe("Test basic strategy", () => {
         const result = basicAiStrategy("x", board);
         expect(result).toEqual([2, 2]);
     });
+});
 
+
+describe("Test optimal strategy", () => {
+
+    test("Fills row", () => {
+
+        const board = createGameBoard();
+        let boardArr = [
+            "x", "x", "",
+            "", "", "",
+            "", "", ""
+        ];
+        for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 3; c++) {
+                board.place(boardArr[c + 3 * r], r, c);
+            }
+        }
+
+        let result = calcBestMove("x", "o", board);
+        expect(result).toEqual([[0, 2]]);
+
+    }),
+
+        test("Fills column", () => {
+
+            const board = createGameBoard();
+            let boardArr = [
+                "x", "", "",
+                "x", "", "",
+                "", "", ""
+            ];
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    board.place(boardArr[c + 3 * r], r, c);
+                }
+            }
+
+            let result = calcBestMove("x", "o", board);
+            expect(result).toEqual([[2, 0]]);
+        }),
+
+        test("Fills se diagonal", () => {
+
+            const board = createGameBoard();
+            let boardArr = [
+                "x", "", "",
+                "", "x", "",
+                "", "", ""
+            ];
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    board.place(boardArr[c + 3 * r], r, c);
+                }
+            }
+
+            let result = calcBestMove("x", "o", board);
+            expect(result).toEqual([[2, 2]]);
+        }),
+
+        test("Fills sw diagonal", () => {
+
+            const board = createGameBoard();
+            let boardArr = [
+                "", "", "x",
+                "", "x", "",
+                "", "", ""
+            ];
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    board.place(boardArr[c + 3 * r], r, c);
+                }
+            }
+
+            let result = calcBestMove("x", "o", 3, boardArr);
+            expect(result).toEqual([[2, 0]]);
+        }),
+
+        test("Blocks row", () => {
+
+            const board = createGameBoard();
+            let boardArr = [
+                "", "o", "o",
+                "", "", "",
+                "", "", ""
+            ];
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    board.place(boardArr[c + 3 * r], r, c);
+                }
+            }
+
+            let result = calcBestMove("x", "o", board);
+            expect(result).toEqual([[0, 0]]);
+
+        });
+
+    test("Prefers filling", () => {
+
+        const board = createGameBoard();
+        let boardArr = [
+            "", "o", "o",
+            "x", "x", "",
+            "", "", ""
+        ];
+        for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 3; c++) {
+                board.place(boardArr[c + 3 * r], r, c);
+            }
+        }
+
+        let result = calcBestMove("x", "o", board);
+        expect(result).toEqual([[1, 2]]);
+
+    });
+
+    test("Multiple options", () => {
+
+        const board = createGameBoard();
+        let boardArr = [
+            "", "x", "x",
+            "x", "x", "",
+            "", "", ""
+        ];
+        for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 3; c++) {
+                board.place(boardArr[c + 3 * r], r, c);
+            }
+        }
+
+        let result = calcBestMove("x", "o", board);
+        expect(result).toEqual([[0, 0], [1, 2], [2, 1], [2, 0]]);
+    });
+
+
+
+    test("Plans ahead", () => {
+
+        const board = createGameBoard();
+
+        // placing at [1, 1] will not result in immediate victory, but will
+        // guarantee it later
+        let boardArr = [
+            "x", "o", "x",
+            "", "", "o",
+            "", "", ""
+        ];
+        for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 3; c++) {
+                board.place(boardArr[c + 3 * r], r, c);
+            }
+        }
+
+        let result = calcBestMove("x", "o", board);
+        expect(result).toEqual([[1, 1]]);
+    });
+
+    test("One option", () => {
+
+        const board = createGameBoard();
+        let boardArr = [
+            "x", "o", "x",
+            "o", "o", "x",
+            "", "x", "o"
+        ];
+        for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 3; c++) {
+                board.place(boardArr[c + 3 * r], r, c);
+            }
+        }
+
+        let result = calcBestMove("x", "o", board);
+        expect(result).toEqual([[2, 0]]);
+    });
 
 });
