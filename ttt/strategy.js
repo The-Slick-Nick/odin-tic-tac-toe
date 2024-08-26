@@ -1,150 +1,26 @@
 import { createGameBoard } from "./ttt.js"
 
 
-const bestMoveMemo = Array(59048);
-
-
-function generateFingerprint(myToken, gameBoard) {
-
-    let total = 0;
-    for (let r = 0; r < gameBoard.size; r++) {
-        for (let c = 0; c < gameBoard.size; c++) {
-            const token = gameBoard.getTokenAt(r, c);
-
-            total = (gameBoard.size * total) + (
-                token === "" ?
-                    0 :
-                    token === myToken ?
-                        1 :
-                        2
-            );
-        }
-    }
-    return total;
-
-}
-
+const bestMoveMemo = Array(60000); // upper bound of possible states
 
 // Assess the "score" of a particular board state
 // @param boardArr - array representing a board (hypothetical or otherwise)
 function calcBestMove(myToken, oppToken, gameBoard, debug = false) {
 
-    const fingerprint = generateFingerprint(myToken, gameBoard)
+    if (debug) {
+        console.log("-".repeat(80));
+    }
+
+    const fingerprint = gameBoard.exportFingerprint(myToken);
 
 
     if (bestMoveMemo[fingerprint] !== undefined) {
         if (debug) {
-            console.log(`Finterprint ${fingerprint} known.`);
+            console.log(`Fingerprint ${fingerprint} known.`);
+            console.log("-".repeat(80));
         }
         return bestMoveMemo[fingerprint];
     }
-
-    // const fillers = [];
-    // const blockers = [];
-    //
-    // let nMine;
-    // let nOpp;
-    // let nEmpty;
-    // let emptyCells;
-    //
-    // /*** Rows ***/
-    // for (let r = 0; r < 3; r++) {
-    //     nMine = nOpp = nEmpty = 0;
-    //     emptyCells = [];
-    //     for (let c = 0; c < 3; c++) {
-    //         let idx = c + 3 * r;
-    //         if (boardArr[idx] === "") {
-    //             emptyCells.push([r, c]);
-    //         }
-    //         nEmpty += boardArr[idx] === "";
-    //         nMine += boardArr[idx] === myToken;
-    //         nOpp += boardArr[idx] === oppToken;
-    //     }
-    //
-    //     if (nMine === 2 && nEmpty === 1) {
-    //         emptyCells.forEach((cell) => fillers.push(cell));
-    //     }
-    //     else if (nOpp === 2 && nEmpty === 1) {
-    //         emptyCells.forEach((cell) => blockers.push(cell));
-    //     }
-    // }
-    //
-    // /*** Columns ***/
-    // for (let c = 0; c < 3; c++) {
-    //     nMine = nOpp = nEmpty = 0;
-    //     emptyCells = [];
-    //     for (let r = 0; r < 3; r++) {
-    //         let idx = c + 3 * r;
-    //         if (boardArr[idx] === "") {
-    //             emptyCells.push([r, c]);
-    //         }
-    //         nEmpty += boardArr[idx] === "";
-    //         nMine += boardArr[idx] === myToken;
-    //         nOpp += boardArr[idx] === oppToken;
-    //     }
-    //
-    //     if (nMine === 2 && nEmpty === 1) {
-    //         emptyCells.forEach((cell) => fillers.push(cell));
-    //     }
-    //     else if (nOpp === 2 && nEmpty === 1) {
-    //         emptyCells.forEach((cell) => blockers.push(cell));
-    //     }
-    // }
-    //
-    // /*** Diag SE ***/
-    // nMine = nOpp = nEmpty = 0;
-    // emptyCells = [];
-    // for (let r = 0; r < 3; r++) {
-    //     let c = r;
-    //     let idx = c + 3 * r;
-    //     if (boardArr[idx] === "") {
-    //         emptyCells.push([r, c]);
-    //     }
-    //     nEmpty += boardArr[idx] === "";
-    //     nMine += boardArr[idx] === myToken;
-    //     nOpp += boardArr[idx] === oppToken;
-    // }
-    //
-    // if (nMine === 2 && nEmpty === 1) {
-    //     emptyCells.forEach((cell) => fillers.push(cell));
-    // }
-    // else if (nOpp === 2 && nEmpty === 1) {
-    //     emptyCells.forEach((cell) => blockers.push(cell));
-    // }
-    //
-    // /*** Diag SW ***/
-    // nMine = nOpp = nEmpty = 0;
-    // emptyCells = [];
-    // for (let r = 0; r < 3; r++) {
-    //     let c = 2 - r;
-    //     let idx = c + 3 * r;
-    //     if (boardArr[idx] === "") {
-    //         emptyCells.push([r, c]);
-    //     }
-    //     nEmpty += boardArr[idx] === "";
-    //     nMine += boardArr[idx] === myToken;
-    //     nOpp += boardArr[idx] === oppToken;
-    // }
-    //
-    // if (nMine === 2 && nEmpty === 1) {
-    //     emptyCells.forEach((cell) => fillers.push(cell));
-    // }
-    // else if (nOpp === 2 && nEmpty === 1) {
-    //     emptyCells.forEach((cell) => blockers.push(cell));
-    // }
-    //
-    //
-    // if (fillers.length > 0) {
-    //     bestMoveMemo[fingerprint] = [];
-    //     fillers.forEach((coord) => bestMoveMemo[fingerprint].push(coord));
-    //     return fillers;
-    // }
-    // else if (blockers.length > 0) {
-    //     bestMoveMemo[fingerprint] = [];
-    //     blockers.forEach((coord) => bestMoveMemo[fingerprint].push(coord));
-    //     return blockers;
-    // }
-
 
     let winners = [];
     let drawers = [];
@@ -163,21 +39,23 @@ function calcBestMove(myToken, oppToken, gameBoard, debug = false) {
             let boardCopy = gameBoard.copy();
             boardCopy.place(myToken, r, c);
 
-            while (!gameBoard.getState().complete) {
+            while (!boardCopy.getState().complete) {
 
-                let oppMove = calcBestMove(oppToken, myToken, boardCopy)[0];
+                let oppMove = calcBestMove(oppToken, myToken, boardCopy, debug)[0];
                 boardCopy.place(oppToken, oppMove[0], oppMove[1]);
 
-                if (gameBoard.getState().complete) {
+
+                if (boardCopy.getState().complete) {
                     break;
                 }
 
-                let myMove = calcBestMove(myToken, oppToken, boardCopy)[0];
+                let myMove = calcBestMove(myToken, oppToken, boardCopy, debug)[0];
                 boardCopy.place(myToken, myMove[0], myMove[1]);
             }
 
             // game complete
-            let endState = gameBoard.getState();
+            let endState = boardCopy.getState();
+
             if (endState.winner === myToken) {
                 winners.push([r, c]);
             }
@@ -190,14 +68,35 @@ function calcBestMove(myToken, oppToken, gameBoard, debug = false) {
         }
     }
 
+    if (debug) {
+        console.log(`From board with token ${myToken}:`)
+        gameBoard.printBoard();
+        console.log("winners");
+        console.log(winners);
+
+        console.log("drawers");
+        console.log(drawers);
+
+        console.log("losers");
+        console.log(losers);
+    }
+
     if (winners.length > 0) {
+        if (debug) { console.log("Using winners"); }
         bestMoveMemo[fingerprint] = winners;
     }
     else if (drawers.length > 0) {
+        if (debug) { console.log("Using drawers"); }
         bestMoveMemo[fingerprint] = drawers;
     }
     else {
+        if (debug) { console.log("Using losers"); }
         bestMoveMemo[fingerprint] = losers;
+    }
+    if (debug) {
+        console.log("returning a moveset:");
+        console.log(bestMoveMemo[fingerprint]);
+        console.log("-".repeat(80));
     }
     return bestMoveMemo[fingerprint];
 }

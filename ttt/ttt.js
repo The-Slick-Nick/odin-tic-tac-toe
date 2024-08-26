@@ -206,12 +206,30 @@ function createGameBoard() {
         }
     }
 
+    function printBoard(topBorder = false, bottomBorder = false) {
 
+        if (topBorder) {
+            console.log("-".repeat(80));
+        }
+
+        for (let r = 0; r < size; r++) {
+            let printstr = "";
+            for (let c = 0; c < size; c++) {
+                printstr += getTokenAt(r, c) + ", ";
+            }
+            console.log(printstr);
+        }
+
+        if (bottomBorder) {
+            console.log("-".repeat(80));
+        }
+    }
 
     return {
         get size() { return size; },
         place, resetBoard, getTokenAt, getState, copy,
-        exportFingerprint, importFingerprint
+        exportFingerprint, importFingerprint,
+        printBoard
     };
 }
 
