@@ -6,10 +6,9 @@ import { easyAiStrategy, mediumAiStrategy, hardAiStrategy } from "./ttt/strategy
  * Script globals
 ******************************************************************************/
 
+// labels
 const statusLbl = document.querySelector(".status-lbl");
 
-const p1Input = document.querySelector("#firstplayer-name");
-const p2Input = document.querySelector("#secondplayer-name");
 
 // buttons
 const newGameBtn = document.querySelector(".options-submit");
@@ -18,6 +17,7 @@ const optionsToggle = document.querySelector(".game-options-toggle");
 
 const toggleArrowPath = document.querySelector(".toggle-arrow>path");
 const optionsBody = document.querySelector(".game-options-body");
+
 
 
 let p1 = null;
@@ -50,8 +50,36 @@ function updateStatus(game) {
 // set up game based on option values
 function setup() {
 
-    p1 = createPlayer(p1Input.value, "x", hardAiStrategy);
-    p2 = createPlayer(p2Input.value, "o", easyAiStrategy);
+    // options
+    const p1Input = document.querySelector("#firstplayer-name");
+    const p2Input = document.querySelector("#secondplayer-name");
+
+    // values
+    const xInputScheme = document.querySelector(
+        'input[name="x-input-scheme"]:checked');
+
+    const oInputScheme = document.querySelector(
+        'input[name="o-input-scheme"]:checked');
+
+
+    const xStrategy = (
+        xInputScheme.value === "easy-ai" ? easyAiStrategy :
+            xInputScheme.value === "medium-ai" ? mediumAiStrategy :
+                xInputScheme.value === "hard-ai" ? hardAiStrategy :
+                    null
+    );
+
+    const oStrategy = (
+        oInputScheme.value === "easy-ai" ? easyAiStrategy :
+            oInputScheme.value === "medium-ai" ? mediumAiStrategy :
+                oInputScheme.value === "hard-ai" ? hardAiStrategy :
+                    null
+    );
+
+    p1 = createPlayer(p1Input.value, "x", xStrategy);
+    p2 = createPlayer(p2Input.value, "o", oStrategy);
+
+
     gameobj = createGame(p1, p2);
 
     gameobj.registerStateChangeCallback(() => updateStatus(gameobj));
@@ -189,21 +217,8 @@ function setup() {
     });
 }
 
-/******************************************************************************
- * Adding button logic
-******************************************************************************/
-
-newGameBtn.addEventListener("click", setup);
-
-resetBtn.addEventListener("click", (e) => {
-
-    statusLbl.innerText = "";
-    gameobj.start();  // restarts
-    updateStatus(gameobj);
-});
-
-optionsToggle.addEventListener("click", (e) => {
-    // toggle options div
+// Toggle the options pane in/out
+function toggleOptionVisibility() {
 
     if (optionsBody.classList.contains("collapsed-h")) {
 
@@ -216,12 +231,32 @@ optionsToggle.addEventListener("click", (e) => {
         toggleArrowPath.setAttribute("d", "m0,0 l100,50 l-100,50 z");
     }
 
+}
+
+/******************************************************************************
+ * Adding button logic
+******************************************************************************/
+
+newGameBtn.addEventListener("click", () => {
+    setup();
+    toggleOptionVisibility();
 });
+
+resetBtn.addEventListener("click", (e) => {
+
+    statusLbl.innerText = "";
+    gameobj.start();  // restarts
+    updateStatus(gameobj);
+});
+
+optionsToggle.addEventListener("click", toggleOptionVisibility);
 
 
 /******************************************************************************
  * Kicking things off
 ******************************************************************************/
+
+
 
 setup();
 updateStatus(gameobj);
