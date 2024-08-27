@@ -9,6 +9,12 @@ import { easyAiStrategy, mediumAiStrategy, hardAiStrategy } from "./ttt/strategy
 // labels
 const statusLbl = document.querySelector(".status-lbl");
 
+const xScoreNameLbl = document.querySelector(".scorelbl-x>.scorelbl-name");
+const xScoreValueLbl = document.querySelector(".scorelbl-x>.scorelbl-value");
+
+const oScoreNameLbl = document.querySelector(".scorelbl-o>.scorelbl-name");
+const oScoreValueLbl = document.querySelector(".scorelbl-o>.scorelbl-value");
+
 // buttons
 const boardCells = document.querySelectorAll(".board-cell");
 const newGameBtn = document.querySelector(".options-submit");
@@ -30,8 +36,9 @@ let gameobj = null;
  * Function utilities
 ******************************************************************************/
 
-function updateStatus(game) {
-    let state = game.getState();
+// Update the various status elements (labels and the like)
+function updateStatus() {
+    let state = gameobj.getState();
     let lbltext = "";
 
     if (state.complete) {
@@ -43,9 +50,15 @@ function updateStatus(game) {
         }
     }
     else {
-        lbltext = game.whoseTurn().name;
+        lbltext = `${gameobj.whoseTurn().name}'s turn`;
     }
     statusLbl.innerText = lbltext;
+
+    xScoreNameLbl.innerText = gameobj.player1.name;
+    xScoreValueLbl.innerText = gameobj.player1.wins;
+
+    oScoreNameLbl.innerText = gameobj.player2.name;
+    oScoreValueLbl.innerText = gameobj.player2.wins;
 }
 
 
@@ -100,18 +113,18 @@ function setup() {
                 .className
                 .split(" ")
                 .filter((cls) => cls.startsWith("row-"))
-                [0]
+            [0]
                 .split("-")
-                [1]
-            );
+            [1]
+        );
 
         const c = parseInt(
             cell
-            .className
-            .split(" ")
-            .filter((cls) => cls.startsWith("col-"))
+                .className
+                .split(" ")
+                .filter((cls) => cls.startsWith("col-"))
             [0]
-            .split("-")
+                .split("-")
             [1]
         );
 
@@ -221,17 +234,19 @@ function setup() {
             });
         });
 
-        gameobj.registerStateChangeCallback(() => {
-
-            // do we need a setup() function scoped state?
-            const state = gameobj.getState();
-
-            if (state.complete) {
-                resetBtn.classList.remove("hidden");
-            }
-        });
-
     });
+
+    gameobj.registerStateChangeCallback(() => {
+
+        const state = gameobj.getState();
+
+        if (state.complete) {
+            resetBtn.classList.remove("hidden");
+        }
+    });
+
+    gameobj.registerStateChangeCallback(updateStatus);
+
 }
 
 // Toggle the options pane in/out
@@ -264,18 +279,18 @@ boardCells.forEach((cell) => {
             .className
             .split(" ")
             .filter((cls) => cls.startsWith("row-"))
-            [0]
+        [0]
             .split("-")
-            [1]
-        );
+        [1]
+    );
 
     let c = parseInt(
         cell
-        .className
-        .split(" ")
-        .filter((cls) => cls.startsWith("col-"))
+            .className
+            .split(" ")
+            .filter((cls) => cls.startsWith("col-"))
         [0]
-        .split("-")
+            .split("-")
         [1]
     );
 
@@ -287,6 +302,7 @@ boardCells.forEach((cell) => {
 newGameBtn.addEventListener("click", () => {
     setup();
     toggleOptionVisibility();
+    updateStatus();
 });
 
 
@@ -296,7 +312,7 @@ resetBtn.addEventListener("click", (e) => {
     resetBtn.classList.add("hidden");
     statusLbl.innerText = "";
     gameobj.start();  // restarts
-    updateStatus(gameobj);
+    updateStatus();
 });
 
 
@@ -308,7 +324,7 @@ optionsToggle.addEventListener("click", toggleOptionVisibility);
  * Kicking things off
 ******************************************************************************/
 setup();
-updateStatus(gameobj);
+updateStatus();
 
 
 

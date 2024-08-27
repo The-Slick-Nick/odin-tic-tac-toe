@@ -96,7 +96,7 @@ button,
     flex-flow: column;
 
     width: 100%;
-    transition: width 0.3s linear, padding 0.1s linear;
+    transition: width 0.2s linear, padding 0.1s 0.2s linear;
     padding: 2rem;
 }
 

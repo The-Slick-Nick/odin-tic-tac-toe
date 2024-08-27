@@ -274,6 +274,12 @@ function createPlayer(name, token, strategy = null) {
         get name() {
             return name;
         },
+        get wins() {
+            return wins;
+        },
+        get losses() {
+            return losses;
+        },
 
         executeStrategy: (board) => {
             return strategy(token, board);
@@ -369,6 +375,8 @@ function createGame(p1, p2) {
             });
         }
 
+        playerIdx = (playerIdx + 1) % players.length;
+
         stateCallbacks.forEach((cb) => { cb(); });
 
         if (board.getState().complete) {
@@ -377,7 +385,6 @@ function createGame(p1, p2) {
 
         // Schedule future turn
 
-        playerIdx = (playerIdx + 1) % players.length;
         const nextPlayer = players[playerIdx];
         if (nextPlayer.strategy !== null) {
 
