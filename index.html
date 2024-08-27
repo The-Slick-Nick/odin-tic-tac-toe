@@ -15,38 +15,57 @@
         <div class="game-options-body">
 
             <div class="player-setup">
+
+                <svg class="setup-token" viewBox="0 0 100 100">
+                    <path d="m0,15 l15,-15 l85,85 l-15,15 m-85,-15 l85,-85 l15,15 l-85,85 z">
+                </svg>
+
                 <input type="text" id="firstplayer-name" value="Player">
 
                 <!-- input scheme -->
-                <input type="radio" name="x-input-scheme" id="x-human" value="human">
-                <label for="x-human">Human</label>
-                <input type="radio" name="x-input-scheme" id="x-easy-ai" value="easy-ai">
-                <label for="x-easy-ai">Computer (Easy)</label>
-                <input type="radio" name="x-input-scheme" id="x-medium-ai" value="medium-ai">
-                <label for="x-medium-ai">Computer (Medium)</label>
-                <input type="radio" name="x-input-scheme" id="x-hard-ai" value="hard-ai">
-                <label for="x-hard-ai">Computer (Hard)</label>
+                <div class="input-scheme-choice">
+                    <input type="radio" name="x-input-scheme" id="x-human" value="human">
+                    <label for="x-human">Human</label>
+                    <input type="radio" name="x-input-scheme" id="x-easy-ai" value="easy-ai">
+                    <label for="x-easy-ai">Computer (Easy)</label>
+                    <input type="radio" name="x-input-scheme" id="x-medium-ai" value="medium-ai">
+                    <label for="x-medium-ai">Computer (Medium)</label>
+                    <input type="radio" name="x-input-scheme" id="x-hard-ai" value="hard-ai">
+                    <label for="x-hard-ai">Computer (Hard)</label>
+                </div>
 
             </div>
 
             <div class="player-setup">
+
+                <svg class="setup-token" viewBox="0 0 100 100">
+                    <path d="m49.5,0 a49,49,0,1,0,1,0 z m0,20 a30,30,0,1,1,-1,0 z">
+                </svg>
+
                 <input type="text" id="secondplayer-name" value="Computer">
 
+
                 <!-- input scheme -->
-                <input type="radio" name="o-input-scheme" id="o-human" value="human">
-                <label for="o-human">Human</label>
-                <input type="radio" name="o-input-scheme" id="o-easy-ai" value="easy-ai">
-                <label for="o-easy-ai">Computer (Easy)</label>
-                <input type="radio" name="o-input-scheme" id="o-medium-ai" value="medium-ai">
-                <label for="o-medium-ai">Computer (Medium)</label>
-                <input type="radio" name="o-input-scheme" id="o-hard-ai" value="hard-ai">
-                <label for="o-hard-ai">Computer (Hard)</label>
+                <div class="input-scheme-choice">
+                    <input type="radio" name="o-input-scheme" id="o-human" value="human">
+                    <label for="o-human">Human</label>
+                    <input type="radio" name="o-input-scheme" id="o-easy-ai" value="easy-ai">
+                    <label for="o-easy-ai">Computer (Easy)</label>
+                    <input type="radio" name="o-input-scheme" id="o-medium-ai" value="medium-ai">
+                    <label for="o-medium-ai">Computer (Medium)</label>
+                    <input type="radio" name="o-input-scheme" id="o-hard-ai" value="hard-ai">
+                    <label for="o-hard-ai">Computer (Hard)</label>
+                </div>
             </div>
 
             <button class="options-submit">New Game!</button>
 
         </div>
         <div class="game-options-toggle">
+            <svg class="toggle-arrow" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#0070f3" d="m100,0 l-100,50 l100,50 z "></path>
+            </svg>
+
         </div>
     </div>
 

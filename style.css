@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
 body {
     display: grid;
 
@@ -7,24 +9,34 @@ body {
 }
 
 /******************************************************************************
+* High-level styles
+******************************************************************************/
+
+button,
+.button-style {
+
+    border-radius: 5px;
+    border: 3px solid black;
+    font-family: "Nunito", sans-serif
+}
+
+/******************************************************************************
 * Options
 ******************************************************************************/
 
 .game-options-container {
 
-    grid-column: 1 / span 1;
-    grid-row: 2 / span 1;
 
-    outline: 2px solid red;
+    position: fixed;
+    z-index: 1;
+
+    height: 75vh;
+    width: auto;
 
     display: flex;
     flex-flow: row nowrap;
 }
 
-.game-options-body {
-    background-color: #aaaaaa;
-    overflow: hidden;
-}
 
 .game-options-toggle {
     flex-shrink: 0;
@@ -37,13 +49,97 @@ body {
     align-self: center;
     justify-self: center;
 
+    /* just for centering */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
     &:hover {
-        background-color: yellow;
+        border-top: 1px solid black;
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
     }
+
+    &>svg>path {
+        stroke: none;
+        fill: black;
+    }
+}
+
+
+.game-options-body {
+    background-color: #aaaaaa;
+    overflow: hidden;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-evenly;
+
+    width: 100%;
+    transition: width 0.3s ease-out;
 }
 
 .collapsed-h {
     width: 0px;
+}
+
+
+
+.player-setup {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+
+/* svg of token */
+.setup-token {
+    grid-row: 1 / span 1;
+    grid-column: 1 / span 2;
+    justify-self: center;
+    align-self: center;
+    height: 4rem;
+}
+
+#firstplayer-name,
+#secondplayer-name {
+    grid-row: 2 / span 1;
+    grid-column: 1 / span 1;
+    align-self: center;
+    justify-self: center;
+    width: 10rem;
+}
+
+
+.input-scheme-choice {
+    grid-row: 2 / span 1;
+    grid-column: 2 / span 1;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+input[type="radio"] {
+    display: none;
+}
+
+/* the actual labels */
+input[type="radio"]+label {
+    border-radius: 15px;
+    font-family: Nunito, sans-serif;
+    white-space: nowrap;
+    text-align: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+}
+
+input[type="radio"]:checked+label {
+    color: white;
+    background-color: black;
+
 }
 
 
@@ -87,7 +183,8 @@ body {
 
 }
 
-svg {
+svg.token-x,
+svg.token-o {
     height: 95%;
     width: 95%;
     display: flex;
@@ -96,13 +193,15 @@ svg {
     overflow: visible;
 }
 
-svg>path {
+svg.token-x>path,
+svg.token-o>path {
     fill: black;
     stroke: none;
 }
 
 
-svg>path {
+svg.token-x,
+svg.token-o {
     overflow: visible;
     transform: scale(0.7);
     transform-origin: center;

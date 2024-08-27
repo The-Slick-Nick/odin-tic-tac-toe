@@ -16,7 +16,7 @@ const newGameBtn = document.querySelector(".options-submit");
 const resetBtn = document.querySelector(".reset-btn");
 const optionsToggle = document.querySelector(".game-options-toggle");
 
-
+const toggleArrowPath = document.querySelector(".toggle-arrow>path");
 const optionsBody = document.querySelector(".game-options-body");
 
 
@@ -205,7 +205,16 @@ resetBtn.addEventListener("click", (e) => {
 optionsToggle.addEventListener("click", (e) => {
     // toggle options div
 
-    optionsBody.classList.toggle("collapsed-h");
+    if (optionsBody.classList.contains("collapsed-h")) {
+
+        optionsBody.classList.remove("collapsed-h");
+        toggleArrowPath.setAttribute("d", "m100,0 l-100,50 l100,50 z");
+
+    }
+    else {
+        optionsBody.classList.add("collapsed-h");
+        toggleArrowPath.setAttribute("d", "m0,0 l100,50 l-100,50 z");
+    }
 
 });
 
