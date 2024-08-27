@@ -9,11 +9,12 @@ import { easyAiStrategy, mediumAiStrategy, hardAiStrategy } from "./ttt/strategy
 // labels
 const statusLbl = document.querySelector(".status-lbl");
 
-
 // buttons
+const boardCells = document.querySelectorAll(".board-cell");
 const newGameBtn = document.querySelector(".options-submit");
 const resetBtn = document.querySelector(".reset-btn");
 const optionsToggle = document.querySelector(".game-options-toggle");
+
 
 const toggleArrowPath = document.querySelector(".toggle-arrow>path");
 const optionsBody = document.querySelector(".game-options-body");
@@ -45,6 +46,15 @@ function updateStatus(game) {
         lbltext = game.whoseTurn().name;
     }
     statusLbl.innerText = lbltext;
+}
+
+
+function clickCell(r, c) {
+
+    // By wrapping this in a function call, we can map clicks to whatever
+    // the current game object is at function call, rather than to the object
+    // reference at event-listener declaration
+    gameobj.clickCell(r, c);
 }
 
 // set up game based on option values
@@ -84,59 +94,56 @@ function setup() {
 
     gameobj.registerStateChangeCallback(() => updateStatus(gameobj));
 
-    document.querySelectorAll(".board-cell").forEach((cell) => {
-
-        cell.childNodes.forEach((child) => child.remove());
-
-        let r = parseInt(
+    boardCells.forEach((cell) => {
+        const r = parseInt(
             cell
                 .className
                 .split(" ")
                 .filter((cls) => cls.startsWith("row-"))
-            [0]
+                [0]
                 .split("-")
-            [1]
-        );
+                [1]
+            );
 
-        let c = parseInt(
+        const c = parseInt(
             cell
-                .className
-                .split(" ")
-                .filter((cls) => cls.startsWith("col-"))
+            .className
+            .split(" ")
+            .filter((cls) => cls.startsWith("col-"))
             [0]
-                .split("-")
+            .split("-")
             [1]
         );
 
-        cell.addEventListener("click", () => {
-            console.log(`Clicked ${r}, ${c}`);
-            gameobj.clickCell(r, c);
-        });
+        // clear existing tokens
+        cell.childNodes.forEach((child) => child.remove());
 
-
-        // Token addition/removal
+        // set up automated token creation
         gameobj.registerStateChangeCallback(() => {
 
-            let token = gameobj.getTokenAt(r, c);
+            const token = gameobj.getTokenAt(r, c);
 
+            // remove if not empty - likely will never trigger?
             if (token === "") {
                 cell.childNodes.forEach((child) => child.remove());
                 return;
             }
 
-            let tokenCls = `token-${token}`;
+            // check existing
+            const tokenCls = `token-${token}`;
             for (let child of cell.childNodes) {
                 if (child.classList.contains(tokenCls)) {
                     return;
                 }
             }
 
+            // add new
             if (token === "x") {
 
-                let xSvg = document.createElementNS(
+                const xSvg = document.createElementNS(
                     "http://www.w3.org/2000/svg", "svg"
                 );
-                let xPath = document.createElementNS(
+                const xPath = document.createElementNS(
                     "http://www.w3.org/2000/svg", "path"
                 );
 
@@ -237,11 +244,43 @@ function toggleOptionVisibility() {
  * Adding button logic
 ******************************************************************************/
 
+// Hook board inputs into game logic
+boardCells.forEach((cell) => {
+    // Note: this is done here rather than in setup() to avoid "stacking"
+    // multiple event listeners on a cell when new games are set up.
+
+    let r = parseInt(
+        cell
+            .className
+            .split(" ")
+            .filter((cls) => cls.startsWith("row-"))
+            [0]
+            .split("-")
+            [1]
+        );
+
+    let c = parseInt(
+        cell
+        .className
+        .split(" ")
+        .filter((cls) => cls.startsWith("col-"))
+        [0]
+        .split("-")
+        [1]
+    );
+
+    cell.addEventListener("click", () => clickCell(r, c));
+});
+
+
+// Start a new game
 newGameBtn.addEventListener("click", () => {
     setup();
     toggleOptionVisibility();
 });
 
+
+// Start a new round
 resetBtn.addEventListener("click", (e) => {
 
     statusLbl.innerText = "";
@@ -249,15 +288,14 @@ resetBtn.addEventListener("click", (e) => {
     updateStatus(gameobj);
 });
 
+
+// Expand/collapse options menu
 optionsToggle.addEventListener("click", toggleOptionVisibility);
 
 
 /******************************************************************************
  * Kicking things off
 ******************************************************************************/
-
-
-
 setup();
 updateStatus(gameobj);
 
