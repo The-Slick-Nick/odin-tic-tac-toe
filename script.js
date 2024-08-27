@@ -221,6 +221,16 @@ function setup() {
             });
         });
 
+        gameobj.registerStateChangeCallback(() => {
+
+            // do we need a setup() function scoped state?
+            const state = gameobj.getState();
+
+            if (state.complete) {
+                resetBtn.classList.remove("hidden");
+            }
+        });
+
     });
 }
 
@@ -283,6 +293,7 @@ newGameBtn.addEventListener("click", () => {
 // Start a new round
 resetBtn.addEventListener("click", (e) => {
 
+    resetBtn.classList.add("hidden");
     statusLbl.innerText = "";
     gameobj.start();  // restarts
     updateStatus(gameobj);

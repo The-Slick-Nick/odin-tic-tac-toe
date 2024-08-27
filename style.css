@@ -7,6 +7,8 @@
 
 
 body {
+    height: 100vh;
+    width: 100vw;
     display: grid;
     grid-template-rows: 1fr min(75vw, 75vh) 1fr;
     grid-template-columns: 1fr min(75vw, 75vh) 1fr;
@@ -26,6 +28,10 @@ button,
     border: 3px solid black;
     font-family: "Nunito", sans-serif
 }
+
+.hidden {
+    visibility: hidden;
+    }
 
 /******************************************************************************
 * Options
@@ -171,6 +177,15 @@ input[type="radio"]:checked+label {
 .grid-top {
     grid-row: 1 / span 1;
     grid-column: 2 / span 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.status-lbl {
+    font-size: 2rem;
 }
 
 /******************************************************************************
@@ -263,15 +278,40 @@ svg.loser>path {
 
 .grid-bottom {
     grid-row: 3 / 4;
-    grid-column: 2 / 3;
+    grid-column: 1 / 4;
 
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
 }
 
 .scorelbl-x {
+    grid-column: 1 / 2;
+}
+
+.reset-btn {
+    grid-column: 2 / 3;
+    justify-self: center;
+    align-self: center;
+    font-size: 2rem;
+}
+
+.scorelbl-o {
+    grid-column: 3 / 4;
+}
+
+.scorelbl-x,
+.scorelbl-o {
+    display: flex;
+    justify-self: stretch;
+    align-self: center;
+}
+
+.scorelbl-x>.scorelbl-name,
+.scorelbl-o>.scorelbl-value {
     margin-right: auto;
 }
 
-.scorelbl-y {
+.scorelbl-x>.scorelbl-value,
+.scorelbl-o>.scorelbl-name {
     margin-left: auto;
-}
+    }
