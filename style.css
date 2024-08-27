@@ -3,6 +3,7 @@
 :root {
     overflow: auto;
     font-family: "Nunito", sans-serif;
+    box-sizing: border-box;
 }
 
 
@@ -31,7 +32,7 @@ button,
 
 .hidden {
     visibility: hidden;
-    }
+}
 
 /******************************************************************************
 * Options
@@ -91,21 +92,18 @@ button,
     border-bottom-right-radius: 10px;
     box-shadow: -10px 10px 5px 0px #111111;
 
-
     display: flex;
     flex-flow: column;
 
     width: 100%;
-    transition: width 0.3s ease-out;
+    transition: width 0.3s linear, padding 0.1s linear;
     padding: 2rem;
-}
-
-.game-options-body {
 }
 
 .collapsed-h {
     width: 0px;
-    padding: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
 .player-setup {
@@ -151,6 +149,7 @@ button,
 input[type="radio"] {
     display: none;
 }
+
 /* the actual options: */
 input[type="radio"]+label {
     border-radius: 15px;
@@ -168,6 +167,12 @@ input[type="radio"]:checked+label {
     background-color: black;
     border: 2px inset #aaaaaa;
 
+}
+
+.options-submit {
+    overflow: hidden;
+    text-wrap: nowrap;
+    align-self: center;
 }
 
 /******************************************************************************
@@ -314,4 +319,4 @@ svg.loser>path {
 .scorelbl-x>.scorelbl-value,
 .scorelbl-o>.scorelbl-name {
     margin-left: auto;
-    }
+}
