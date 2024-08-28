@@ -6,6 +6,12 @@
     box-sizing: border-box;
 }
 
+/* remove the naughty orange outline in firefox */
+textarea:focus,
+input:focus {
+    outline: none;
+}
+
 
 body {
     margin: 0px;
@@ -15,8 +21,11 @@ body {
     grid-template-rows: 1fr min(75vw, 75vh) 1fr;
     grid-template-columns: 1fr min(75vw, 75vh) 1fr;
     background-color: gray;
+}
 
-
+input:invalid,
+.invalid {
+    border: 1px solid red;
 }
 
 /******************************************************************************

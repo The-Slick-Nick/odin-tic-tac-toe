@@ -21,6 +21,9 @@ const newGameBtn = document.querySelector(".options-submit");
 const resetBtn = document.querySelector(".reset-btn");
 const optionsToggle = document.querySelector(".game-options-toggle");
 
+// inputs
+const p1Input = document.querySelector("#firstplayer-name");
+const p2Input = document.querySelector("#secondplayer-name");
 
 const toggleArrowPath = document.querySelector(".toggle-arrow>path");
 const optionsBody = document.querySelector(".game-options-body");
@@ -73,9 +76,6 @@ function clickCell(r, c) {
 // set up game based on option values
 function setup() {
 
-    // options
-    const p1Input = document.querySelector("#firstplayer-name");
-    const p2Input = document.querySelector("#secondplayer-name");
 
     // values
     const xInputScheme = document.querySelector(
@@ -265,6 +265,18 @@ function toggleOptionVisibility() {
 
 }
 
+
+// returns a boolean flag if inputs are okay or not
+function nameInputsValid() {
+
+    return (
+        p1Input.value.length > 0
+        && p2Input.value.length > 0
+        && p1Input.value !== p2Input.value
+    );
+
+}
+
 /******************************************************************************
  * Adding button logic
 ******************************************************************************/
@@ -298,8 +310,33 @@ boardCells.forEach((cell) => {
 });
 
 
+[p1Input, p2Input].forEach((input) => {
+    input.addEventListener("keyup", () => {
+        p1Input.value = p1Input.value.substring(0, 16);
+        p2Input.value = p2Input.value.substring(0, 16);
+
+        console.log(`p1Input.value = ${p1Input.value}`);
+        console.log(`p2Input.value = ${p2Input.value}`);
+
+        if (nameInputsValid()) {
+            p1Input.classList.remove("invalid");
+            p2Input.classList.remove("invalid");
+        }
+        else {
+            p1Input.classList.add("invalid");
+            p2Input.classList.add("invalid");
+        }
+    });
+});
+
+
 // Start a new game
 newGameBtn.addEventListener("click", () => {
+
+    if (!nameInputsValid()) {
+        return;
+    }
+
     setup();
     toggleOptionVisibility();
     updateStatus();
