@@ -58,7 +58,7 @@
                 </div>
             </div>
 
-            <button class="options-submit">New Game!</button>
+            <button class="options-submit">New Game</button>
 
         </div>
         <div class="game-options-toggle">
@@ -109,16 +109,21 @@
     </div>
 
     <div class="grid-bottom">
-        <div class="scorelbl-x">
-            <span class="scorelbl-name">x name</span>
-            <span class="scorelbl-value">0</span>
-        </div>
+        <div class="scorelbl-container">
+            <svg class="scorelbl-token x" viewBox="0 0 100 100">
+                <path d="m0,15 l15,-15 l85,85 l-15,15 m-85,-15 l85,-85 l15,15 l-85,85 z">
+            </svg>
+            <span class="scorelbl-name x">x name</span>
+            <span class="scorelbl-value x">0</span>
 
-        <button class="reset-btn hidden">New Round</button>
+            <button class="reset-btn hidden">New Round</button>
 
-        <div class="scorelbl-o">
-            <span class="scorelbl-value">0</span>
-            <span class="scorelbl-name">o name</span>
+            <span class="scorelbl-value o">0</span>
+            <span class="scorelbl-name o">o name</span>
+
+            <svg class="scorelbl-token o" viewBox="0 0 100 100">
+                <path d="m49.5,0 a49,49,0,1,0,1,0 z m0,20 a30,30,0,1,1,-1,0 z">
+            </svg>
         </div>
     </div>
 

@@ -9,11 +9,11 @@ import { easyAiStrategy, mediumAiStrategy, hardAiStrategy } from "./ttt/strategy
 // labels
 const statusLbl = document.querySelector(".status-lbl");
 
-const xScoreNameLbl = document.querySelector(".scorelbl-x>.scorelbl-name");
-const xScoreValueLbl = document.querySelector(".scorelbl-x>.scorelbl-value");
+const xScoreNameLbl = document.querySelector(".scorelbl-name.x");
+const xScoreValueLbl = document.querySelector(".scorelbl-value.x");
 
-const oScoreNameLbl = document.querySelector(".scorelbl-o>.scorelbl-name");
-const oScoreValueLbl = document.querySelector(".scorelbl-o>.scorelbl-value");
+const oScoreNameLbl = document.querySelector(".scorelbl-name.o");
+const oScoreValueLbl = document.querySelector(".scorelbl-value.o");
 
 // buttons
 const boardCells = document.querySelectorAll(".board-cell");
