@@ -108,6 +108,7 @@ function setup() {
     gameobj.registerStateChangeCallback(() => updateStatus(gameobj));
 
     boardCells.forEach((cell) => {
+        /* put all listeners here for anything a board cell must do */
         const r = parseInt(
             cell
                 .className
@@ -217,7 +218,6 @@ function setup() {
             }
 
             if (!state.complete) {
-                console.log("Nothing to do...");
                 return;
             }
 
@@ -233,9 +233,9 @@ function setup() {
                 });
             });
         });
-
     });
 
+    gameobj.registerStateChangeCallback(applyClickability);
     gameobj.registerStateChangeCallback(() => {
 
         const state = gameobj.getState();
@@ -277,6 +277,47 @@ function nameInputsValid() {
 
 }
 
+function applyClickability() {
+
+    const state = gameobj.getState();
+
+
+    boardCells.forEach((cell) => {
+
+        const r = parseInt(
+            cell
+                .className
+                .split(" ")
+                .filter((cls) => cls.startsWith("row-"))
+            [0]
+                .split("-")
+            [1]
+        );
+
+        const c = parseInt(
+            cell
+                .className
+                .split(" ")
+                .filter((cls) => cls.startsWith("col-"))
+            [0]
+                .split("-")
+            [1]
+        );
+
+
+        if (
+            !state.complete &&
+            state.whoseTurn.isHuman &&
+            gameobj.getTokenAt(r, c) === ""
+        ) {
+            cell.classList.add("clickable");
+        }
+        else {
+            cell.classList.remove("clickable");
+        }
+    });
+}
+
 /******************************************************************************
  * Adding button logic
 ******************************************************************************/
@@ -306,6 +347,7 @@ boardCells.forEach((cell) => {
         [1]
     );
 
+
     cell.addEventListener("click", () => clickCell(r, c));
 });
 
@@ -314,9 +356,6 @@ boardCells.forEach((cell) => {
     input.addEventListener("keyup", () => {
         p1Input.value = p1Input.value.substring(0, 16);
         p2Input.value = p2Input.value.substring(0, 16);
-
-        console.log(`p1Input.value = ${p1Input.value}`);
-        console.log(`p2Input.value = ${p2Input.value}`);
 
         if (nameInputsValid()) {
             p1Input.classList.remove("invalid");
@@ -340,6 +379,7 @@ newGameBtn.addEventListener("click", () => {
     setup();
     toggleOptionVisibility();
     updateStatus();
+    applyClickability();
 });
 
 
@@ -361,6 +401,7 @@ optionsToggle.addEventListener("click", toggleOptionVisibility);
  * Kicking things off
 ******************************************************************************/
 setup();
+applyClickability();
 updateStatus();
 
 

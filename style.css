@@ -23,14 +23,20 @@ body {
     background-color: gray;
 }
 
+
+/******************************************************************************
+* High-level styles
+******************************************************************************/
+
 input:invalid,
 .invalid {
     border: 1px solid red;
 }
 
-/******************************************************************************
-* High-level styles
-******************************************************************************/
+.clickable {
+    cursor: pointer;
+}
+
 
 button,
 .button-style {
@@ -324,9 +330,6 @@ svg.loser>path {
     font-size: 2rem;
 }
 
-
-/* Style */
-
 .scorelbl-token {
     height: 1rem;
     width: 1rem;
@@ -347,4 +350,12 @@ svg.loser>path {
 .scorelbl-x>.scorelbl-value,
 .scorelbl-o>.scorelbl-name {
     margin-left: auto;
+}
+
+.scorelbl-name {
+    font-size: 1.5rem;
+}
+
+.scorelbl-value {
+    font-size: 2rem;
 }

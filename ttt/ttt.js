@@ -280,6 +280,9 @@ function createPlayer(name, token, strategy = null) {
         get losses() {
             return losses;
         },
+        get isHuman() {
+            return strategy === null;
+        },
 
         executeStrategy: (board) => {
             return strategy(token, board);
